@@ -1,6 +1,7 @@
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
 import 'package:doni_pizza/presentation/home_screen.dart';
-import 'package:doni_pizza/presentation/welcome_screen.dart';
+import 'package:doni_pizza/presentation/ui/auth_screen/welcome_screen.dart';
+import 'package:doni_pizza/presentation/ui/tab_box/tab_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,9 +13,9 @@ class RouterApp extends StatelessWidget {
     return BlocConsumer<AuthCubit, AuthState>(
       builder: (context, state) {
         if (state == AuthState.unauthenticated) {
-          return WelcomeScreen();
+          return const WelcomeScreen();
         } else {
-          return const HomeScreen();
+          return const TabBox();
         }
       },
       listener: (BuildContext context, AuthState state) {
