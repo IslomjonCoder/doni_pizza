@@ -1,5 +1,7 @@
 import 'package:doni_pizza/business_logic/auth_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/order_bloc.dart';
+import 'package:doni_pizza/business_logic/blocs/food_bloc/food_bloc.dart';
+import 'package:doni_pizza/business_logic/blocs/promotion_bloc/promotion_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/category_cubit/category_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/category_index_cubit/category_index_cubit.dart';
@@ -8,6 +10,7 @@ import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
 import 'package:doni_pizza/data/repositories/auth_repo.dart';
 import 'package:doni_pizza/data/repositories/category_repo.dart';
 import 'package:doni_pizza/data/repositories/food_repo.dart';
+import 'package:doni_pizza/data/repositories/promotion_repo.dart';
 import 'package:doni_pizza/data/repositories/user_repo.dart';
 import 'package:doni_pizza/firebase_options.dart';
 import 'package:doni_pizza/generated/codegen_loader.g.dart';
@@ -39,7 +42,7 @@ class MyApp extends StatelessWidget {
   final UserRepository userRepository = UserRepository();
   final CategoryRepository categoryRepository = CategoryRepository();
   final FoodItemRepository foodItemRepository = FoodItemRepository();
-
+  final PromotionRepository promotionRepository = PromotionRepository();
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -47,6 +50,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<AuthCubit>(create: (context) => AuthCubit()),
         BlocProvider<OrderBloc>(create: (context) => OrderBloc()),
         BlocProvider<TabCubit>(create: (context) => TabCubit()),
+        BlocProvider<PromotionBloc>(
+            create: (context) => PromotionBloc(promotionRepository)..add(GetAllPromotions())),
+        BlocProvider<FoodBlocRemote>(
+            create: (context) => FoodBlocRemote(foodItemRepository)..add(GetAll())),
         BlocProvider<CategoryIndexCubit>(create: (context) => CategoryIndexCubit()),
         BlocProvider<CategoryCubit>(create: (context) => CategoryCubit(categoryRepository)),
         BlocProvider<FoodCubit>(create: (context) => FoodCubit(foodItemRepository)),

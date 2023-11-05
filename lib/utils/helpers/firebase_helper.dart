@@ -4,11 +4,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 class TFirebaseHelper {
   static final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  static Future<String> uploadImage(String filePath, String storagePath) async {
+  static Future<String> uploadImage(File file, String storagePath) async {
     final ref = _storage.ref().child(storagePath);
 
     try {
-      final task = await ref.putFile(File(filePath));
+      final task = await ref.putFile(file, SettableMetadata(contentType: 'image/jpeg'));
       final url = await task.ref.getDownloadURL();
       return url;
     } catch (e) {
