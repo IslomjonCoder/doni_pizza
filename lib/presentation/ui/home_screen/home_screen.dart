@@ -80,33 +80,33 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  final colors = <Color>[
-    Colors.red,
-    Colors.green,
-    Colors.blue,
-  ];
+  // final colors = <Color>[
+  //   Colors.red,
+  //   Colors.green,
+  //   Colors.blue,
+  // ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            print('Started');
-            final promotion = Promotion(
-              id: '2',
-              title: 'Limited Time Deal',
-              description: 'Try our new menu items with exclusive discounts.',
-              imageUrl: 'https://example.com/promotion2.jpg',
-            );
-
-            final image = await THelperFunctions.getImageFromGallery();
-            if (image != null) {
-              if (!context.mounted) return;
-              context.read<PromotionBloc>().add(UpdatePromotion(promotion, image));
-            }
-            print('Ended');
-          },
-          child: const Text("GO")),
+      // floatingActionButton: FloatingActionButton(
+      //     onPressed: () async {
+      //       print('Started');
+      //       final promotion = Promotion(
+      //         id: '2',
+      //         title: 'Limited Time Deal',
+      //         description: 'Try our new menu items with exclusive discounts.',
+      //         imageUrl: 'https://example.com/promotion2.jpg',
+      //       );
+      //
+      //       final image = await THelperFunctions.getImageFromGallery();
+      //       if (image != null) {
+      //         if (!context.mounted) return;
+      //         context.read<PromotionBloc>().add(UpdatePromotion(promotion, image));
+      //       }
+      //       print('Ended');
+      //     },
+      //     child: const Text("GO")),
       backgroundColor: Colors.white,
       appBar: AppBar(
         // automaticallyImplyLeading: false,
@@ -219,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             // Promotions(),
-            Gap(TSizes.md),
+            const Gap(TSizes.md),
             BlocBuilder<PromotionBloc, PromotionState>(
               builder: (context, state) {
                 if (state is PromotionLoading) {
@@ -229,7 +229,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Container(),
                   );
                 } else if (state is PromotionLoaded) {
-                  print(state.promotions.length);
                   return CarouselSlider(
                       options: CarouselOptions(
                         height: 150,
@@ -242,7 +241,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           3,
                           (index) => Expanded(
                                 child: Container(
-                                  color: colors[index],
                                   child: CachedNetworkImage(
                                     imageUrl: state.promotions[index].imageUrl,
                                     fit: BoxFit.scaleDown,
