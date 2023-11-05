@@ -1,7 +1,7 @@
-import 'package:doni_pizza/data/database/food_database.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Events
 abstract class FoodEvent {}
@@ -25,7 +25,7 @@ class DeleteFoods extends FoodEvent {
 }
 
 class DeleteFood extends FoodEvent {
-  final FoodItem food;
+  final OrderItem food;
 
   DeleteFood(this.food);
 }
@@ -72,99 +72,85 @@ class FoodErrorState extends FoodState {
 }
 
 class FoodBloc extends Bloc<FoodEvent, FoodState> {
-  final LocalDatabase foodRepository = LocalDatabase();
-  List<FoodItem> foodItems = [];
-  double totalValue = 0.0;
+  final Box<OrderItem> foodBox = Hive.box<OrderItem>('orderItems');
 
+  @override
   FoodBloc() : super(TodoInitialState()) {
     on<LoadTodosEvent>(_handleLoadTodosEvent);
     on<AddFoodEvent>(_handleAddFoodEvent);
     on<DeleteFoods>(_handleDeleteFoods);
-    // on<UpdateCountEvent>(_handleUpdateCountEvent);
     on<DeleteFood>(_handleDeleteFoodEvent);
     on<IncrementCountEvent>(_handleIncrementCountEvent);
     on<DecrementCountEvent>(_handleDecrementCountEvent);
   }
 
-  void _handleLoadTodosEvent(LoadTodosEvent event, Emitter<FoodState> emit) async {
-    emit(FoodLoadingState());
-    try {
-      final foods = await foodRepository.fetchAllFoodItems();
-
-      emit(FoodLoadedState(foods));
-    } catch (e) {
-      emit(FoodErrorState('Failed to load foods: $e'));
-    }
+  void _handleLoadTodosEvent(LoadTodosEvent event, Emitter<FoodState> emit) {
+    emit(FoodLoadedState(foodBox.values.toList()));
   }
 
-  void _handleAddFoodEvent(AddFoodEvent event, Emitter<FoodState> emit) async {
+  void _handleAddFoodEvent(AddFoodEvent event, Emitter<FoodState> emit) {
     try {
-      await foodRepository.insertFood(event.food);
-      final foods = await foodRepository.fetchAllFoodItems();
-
-      emit(FoodLoadedState(foods));
+      foodBox.add(OrderItem(food: event.food, quantity: 1));
+      emit(FoodLoadedState(foodBox.values.toList()));
     } catch (e) {
       emit(FoodErrorState('Failed to add food: $e'));
     }
   }
 
-  /*void _handleUpdateCountEvent(UpdateCountEvent event, Emitter<FoodState> emit) async {
+  void _handleIncrementCountEvent(IncrementCountEvent event, Emitter<FoodState> emit) {
     try {
-      final updatedFood = event.food.copyWith(count: event.newCount);
-      await foodRepository.updateFoodByCount(updatedFood.description, updatedFood.count);
-      final foods = await foodRepository.fetchAllFoodItems();
-      foodItems = foods;
+      final int index = foodBox.values
+          .toList()
+          .indexWhere((orderItem) => orderItem.food.id == event.food.food.id);
 
-      emit(FoodLoadedState(foods));
-    } catch (e) {
-      emit(FoodErrorState('Failed to update food count: $e'));
-    }
-  }*/
-
-  void _handleIncrementCountEvent(IncrementCountEvent event, Emitter<FoodState> emit) async {
-    try {
-      final OrderItem updatedFood = event.food.copyWith(quantity: event.food.quantity + 1);
-      await foodRepository.updateFoodByCount(updatedFood.food.description, updatedFood.quantity);
-      final foods = await foodRepository.fetchAllFoodItems();
-
-      emit(FoodLoadedState(foods));
+      if (index >= 0) {
+        final OrderItem updatedFood =
+            foodBox.getAt(index)!.copyWith(quantity: event.food.quantity + 1);
+        foodBox.putAt(index, updatedFood);
+        emit(FoodLoadedState(foodBox.values.toList()));
+      }
     } catch (e) {
       emit(FoodErrorState('Failed to increment item count: $e'));
     }
   }
 
-  void _handleDecrementCountEvent(DecrementCountEvent event, Emitter<FoodState> emit) async {
+  void _handleDecrementCountEvent(DecrementCountEvent event, Emitter<FoodState> emit) {
     try {
-      if (event.food.quantity > 1) {
-        final OrderItem updatedFood = event.food.copyWith(quantity: event.food.quantity - 1);
-        await foodRepository.updateFoodByCount(updatedFood.food.description, updatedFood.quantity);
-        final foods = await foodRepository.fetchAllFoodItems();
+      final int index = foodBox.values
+          .toList()
+          .indexWhere((orderItem) => orderItem.food.id == event.food.food.id);
 
-        emit(FoodLoadedState(foods));
+      if (index >= 0 && event.food.quantity > 1) {
+        final OrderItem updatedFood =
+            foodBox.getAt(index)!.copyWith(quantity: event.food.quantity - 1);
+        foodBox.putAt(index, updatedFood);
+        emit(FoodLoadedState(foodBox.values.toList()));
       }
     } catch (e) {
       emit(FoodErrorState('Failed to decrement item count: $e'));
     }
   }
 
-  void _handleDeleteFoods(DeleteFoods event, Emitter<FoodState> emit) async {
+  void _handleDeleteFoods(DeleteFoods event, Emitter<FoodState> emit) {
     try {
-      await foodRepository.deleteAll();
-      final foods = await foodRepository.fetchAllFoodItems();
-      emit(FoodLoadedState(foods));
+      foodBox.clear();
+      print('ok');
+      emit(FoodLoadedState(foodBox.values.toList()));
     } catch (e) {
       emit(FoodErrorState('Failed to delete foods: $e'));
     }
   }
 
-  void _handleDeleteFoodEvent(DeleteFood event, Emitter<FoodState> emit) async {
+  void _handleDeleteFoodEvent(DeleteFood event, Emitter<FoodState> emit) {
     try {
-      final FoodItem food = event.food;
+      final int index = foodBox.values
+          .toList()
+          .indexWhere((orderItem) => orderItem.food.id == event.food.food.id);
 
-      await foodRepository.deleteFood(food.description);
-      final foods = await foodRepository.fetchAllFoodItems();
-
-      emit(FoodLoadedState(foods));
+      if (index >= 0) {
+        foodBox.deleteAt(index);
+        emit(FoodLoadedState(foodBox.values.toList()));
+      }
     } catch (e) {
       emit(FoodErrorState('Failed to delete food: $e'));
     }

@@ -1,4 +1,5 @@
 import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
+import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,33 +20,39 @@ class TabBoxState extends State<TabBox> {
         index: context.watch<TabCubit>().state,
         children: context.read<TabCubit>().pages,
       ),
-      bottomNavigationBar: DotNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: true,
         backgroundColor: Colors.grey[300],
         currentIndex: context.watch<TabCubit>().state,
         onTap: context.read<TabCubit>().changeTab,
         unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.grey[800],
         items: [
-          DotNavigationBarItem(
+          BottomNavigationBarItem(
             icon: const Icon(Icons.home),
-            selectedColor: Colors.black,
+            label: 'Home',
+            // // selectedColor: Colors.black,
           ),
-          DotNavigationBarItem(
+          BottomNavigationBarItem(
             icon: const Badge(
               label: Text('7'),
               child: Icon(Icons.shopping_cart),
             ),
-            selectedColor: Colors.black,
+            label: 'Cart',
+            // selectedColor: Colors.black,
           ),
-          DotNavigationBarItem(
+          BottomNavigationBarItem(
             icon: const Badge(
               label: Text('1'),
               child: Icon(Icons.access_time_outlined),
             ),
-            selectedColor: Colors.black,
+            label: 'Orders',
+            // selectedColor: Colors.black,
           ),
-          DotNavigationBarItem(
+          BottomNavigationBarItem(
             icon: const Icon(Icons.person),
-            selectedColor: Colors.black,
+            // selectedColor: Colors.black,
+            label: 'Profile',
           ),
         ],
       ),

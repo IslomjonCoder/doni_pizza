@@ -2,6 +2,7 @@ import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/data/database/food_database.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
+import 'package:doni_pizza/utils/device/device_utility.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,259 +11,223 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:doni_pizza/presentation/ui/orders/order_detail.dart';
 import 'package:doni_pizza/utils/icons.dart';
+import 'package:gap/gap.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
+class AppStyles {
+  static const TextStyle appBarTitle = TextStyle(
+    color: Colors.black,
+    fontFamily: 'Sora',
+    fontWeight: FontWeight.w600,
+    fontSize: 30,
+  );
+
+  static const TextStyle clearButton = TextStyle(
+    color: Colors.red,
+    fontFamily: 'Sora',
+    fontWeight: FontWeight.w600,
+    fontSize: 15,
+  );
+
+  static const TextStyle itemTitle = TextStyle(
+    color: Colors.black,
+    fontFamily: 'Sora',
+  );
+
+  static const TextStyle itemPrice = TextStyle(
+    color: Colors.black,
+    fontFamily: 'Sora',
+  );
+
+  static const TextStyle itemCount = TextStyle(
+    color: Colors.black87,
+  );
+
+  static const TextStyle orderButton = TextStyle(
+    color: Colors.white,
+    fontFamily: 'Sora',
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+  );
+
+  static const TextStyle emptyCartText = TextStyle(
+    fontFamily: 'Sora',
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  );
+}
+
+class AppSizes {
+  static const double horizontalPadding = 16.0;
+  static const double verticalPadding = 5.0;
+  static const double appBarTitleSize = 30;
+  static const double clearButtonSize = 15;
+  static const double emptyCartTextSize = 20;
+}
+
 class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+  const CartScreen({Key? key});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
-  late List<FoodItem> foodItems;
-  bool showLottie = false;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   fetchFoodItems();
-  // }
-
-  // Future<void> fetchFoodItems() async {
-  //   final List<FoodItem> items = await LocalDatabase.instance.fetchAllFoodItems();
-  //   setState(() {
-  //     foodItems = items;
-  //   });
-  // }
-  //
-  // void incrementCount(OrderItem item) {
-  //   context.read<FoodBloc>().add(IncrementCountEvent(item));
-  //
-  //   double newTotalCost = calculateTotalPrice(foodItems);
-  // }
-
-  /*void decrementCount(OrderItem item) {
-    if (item.quantity == 1) {
-      context.read<FoodBloc>().add(DeleteFood(item));
-    } else {
-      context.read<FoodBloc>().add(DecrementCountEvent(item));
-    }
-
-    double newTotalCost = calculateTotalPrice(foodItems);
-  }*/
-
-/*  double calculateTotalPrice(List<FoodItem> foodItems) {
-    double totalPrice = 0.0;
-    for (final food in foodItems) {
-      totalPrice += food.count * food.price;
-    }
-    return totalPrice;
-  }*/
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final foodBloc = context.read<FoodBloc>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: false,
         elevation: 0,
-        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
-        title: Text(
-          LocaleKeys.cart.tr(),
-          style: const TextStyle(
-            color: Colors.black,
-            fontFamily: 'Sora',
-            fontWeight: FontWeight.w600,
-            fontSize: 30,
-          ),
-        ),
+        title: Text(LocaleKeys.cart.tr(),
+            style: AppStyles.appBarTitle.copyWith(fontSize: AppSizes.appBarTitleSize)),
         actions: [
-          ZoomTapAnimation(
-            onTap: () {
-              context.read<FoodBloc>().add(DeleteFoods());
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10.0,
-              ),
-              child: Center(
-                child: Text(
-                  LocaleKeys.clear.tr(),
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontFamily: 'Sora',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
+          TextButton(
+            onPressed: () {},
+            child: ZoomTapAnimation(
+              onTap: () => foodBloc.add(DeleteFoods()),
+              child: Text(
+                LocaleKeys.clear.tr(),
+                style: AppStyles.clearButton.copyWith(fontSize: AppSizes.clearButtonSize),
               ),
             ),
           ),
         ],
       ),
-      /*body: BlocBuilder<FoodBloc, FoodState>(
+      // ...
+      body: BlocBuilder<FoodBloc, FoodState>(
         builder: (context, state) {
+          print("state is $state");
           if (state is TodoInitialState || state is FoodLoadingState) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is FoodErrorState) {
-            return Center(child: Text(state.errorMessage));
+            return Center(child: Text(state.errorMessage, textAlign: TextAlign.center));
           } else if (state is FoodLoadedState) {
-            List<FoodItem> foodItems = state.foods;
-            return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: foodItems.isEmpty
-                    ? Center(
-                        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                          SvgPicture.asset(AppImages.emptyCart),
-                          const SizedBox(height: 32.0),
-                          Text(
-                            LocaleKeys.emptyCart.tr(),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontFamily: 'Sora', fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                        ]),
-                      )
-                    : Column(
-                        children: [
-                          Expanded(
-                            child: ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: foodItems.length,
-                              itemBuilder: (context, index) {
-                                final item = foodItems[index];
-                                return Dismissible(
-                                  key: Key(item.name),
-                                  background: Container(
-                                    margin: const EdgeInsets.symmetric(vertical: 5.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Colors.red,
-                                    ),
-                                    child: const Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(right: 16.0),
-                                        child: Icon(
-                                          Icons.delete,
-                                          color: Colors.white,
+            print(state.foods.length);
+            return state.foods.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(AppImages.emptyCart),
+                        const SizedBox(height: AppSizes.verticalPadding * 6), // Adjusted size
+                        Text(
+                          LocaleKeys.emptyCart.tr(),
+                          textAlign: TextAlign.center,
+                          style: AppStyles.emptyCartText
+                              .copyWith(fontSize: AppSizes.emptyCartTextSize), // Adjusted size
+                        ),
+                      ],
+                    ),
+                  )
+                : Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: state.foods.length,
+                          itemBuilder: (context, index) {
+                            final item = state.foods[index];
+                            return ListTile(
+                              // leading: Image.asset(
+                              //   item.food.imageUrl,
+                              //   width: 80,
+                              //   height: 80,
+                              // ),
+                              title: Text(
+                                item.food.name,
+                                style: AppStyles.itemTitle,
+                              ),
+                              subtitle: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${item.food.price}${LocaleKeys.usd.tr()}',
+                                    style: AppStyles.itemPrice,
+                                  ),
+                                  const SizedBox(
+                                      width: AppSizes.horizontalPadding), // Adjusted size
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.remove,
+                                          color: Colors.black87,
                                         ),
+                                        onPressed: () {
+                                          if (item.quantity == 1) {
+                                            foodBloc.add(DeleteFood(item));
+                                          } else {
+                                            foodBloc.add(DecrementCountEvent(item));
+                                          }
+                                        },
                                       ),
-                                    ),
+                                      Text(
+                                        item.quantity.toString(),
+                                        style: AppStyles.itemCount,
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.add,
+                                          color: Colors.black87,
+                                        ),
+                                        onPressed: () {
+                                          print('IncrementCountEvent');
+                                          foodBloc.add(IncrementCountEvent(item));
+                                        },
+                                      ),
+                                    ],
                                   ),
-                                  direction: DismissDirection.endToStart,
-                                  onDismissed: (direction) async {
-                                    context.read<FoodBloc>().add(DeleteFood(item));
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.symmetric(vertical: 5.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Colors.black.withOpacity(0.1),
-                                    ),
-                                    child: ListTile(
-                                      leading: Image.asset(
-                                        item.imageUrl,
-                                        width: 80,
-                                        height: 80,
-                                      ),
-                                      title: Text(
-                                        item.name,
-                                        style: const TextStyle(
-                                            color: Colors.black, fontFamily: 'Sora'),
-                                      ),
-                                      subtitle: Row(
-                                        children: [
-                                          Text(
-                                            '${item.price}${LocaleKeys.usd.tr()}',
-                                            style: const TextStyle(
-                                                color: Colors.black, fontFamily: 'Sora'),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                icon: const Icon(
-                                                  Icons.remove,
-                                                  color: Colors.black87,
-                                                ),
-                                                onPressed: () {
-                                                  decrementCount(item);
-                                                },
-                                              ),
-                                              Text(
-                                                item.count.toString(),
-                                                style: const TextStyle(
-                                                  color: Colors.black87,
-                                                ),
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(
-                                                  Icons.add,
-                                                  color: Colors.black87,
-                                                ),
-                                                onPressed: () {
-                                                  incrementCount(item);
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      if (state.foods.isNotEmpty)
+                        ZoomTapAnimation(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OrderDetailScreen(
+                                  foodItems: state.foods,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              color: Colors.black,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: AppSizes.verticalPadding * 3), // Adjusted size
+                              child: Center(
+                                child: Text(
+                                  "${LocaleKeys.orderNow.tr()}  /${state.totalValue}${LocaleKeys.usd.tr()}",
+                                  style: AppStyles.orderButton, // Adjusted size
+                                ),
+                              ),
                             ),
                           ),
-                          foodItems.isNotEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.only(bottom: 130.0, top: 5.0),
-                                  child: ZoomTapAnimation(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => OrderDetailScreen(
-                                            foodItems: foodItems,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(16),
-                                        color: Colors.black,
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 15.0),
-                                        child: Center(
-                                          child: Text(
-                                            "${LocaleKeys.orderNow.tr()}  /${calculateTotalPrice(foodItems).toStringAsFixed(2)}${LocaleKeys.usd.tr()}",
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: 'Sora',
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox(),
-                        ],
-                      ));
+                        ),
+                      Gap(TDevice.getBottomNavigationBarHeight() * 1.5)
+                    ],
+                  );
           } else {
             return Center(child: Text('Unknown state: $state'));
           }
         },
-      ),*/
+      ),
     );
   }
 }

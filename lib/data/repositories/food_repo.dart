@@ -9,9 +9,7 @@ class FoodItemRepository {
   Future<List<FoodItem>> getAllFoodItems() async {
     // try {
 
-    final querySnapshot = await _firestore
-        .collection(_foodItemsCollection)
-        .get(const GetOptions(source: Source.cache));
+    final querySnapshot = await _firestore.collection(_foodItemsCollection).get();
     if (querySnapshot.docs.isNotEmpty) {
       return querySnapshot.docs.map((doc) {
         return FoodItem.fromJson(doc.data());
@@ -30,7 +28,7 @@ class FoodItemRepository {
       final querySnapshot = await _firestore
           .collection(_foodItemsCollection)
           .where('category.id', isEqualTo: categoryId)
-          .get((const GetOptions(source: Source.cache)));
+          .get();
 
       if (querySnapshot.docs.isNotEmpty) {
         return querySnapshot.docs.map((doc) {
@@ -52,7 +50,7 @@ class FoodItemRepository {
           .collection(_foodItemsCollection)
           .where('name', isGreaterThanOrEqualTo: query)
           .where('name', isLessThan: query + "\uf8ff")
-          .get((const GetOptions(source: Source.cache)));
+          .get();
       print(querySnapshot.docs.length);
       if (querySnapshot.docs.isNotEmpty) {
         return querySnapshot.docs.map((doc) {

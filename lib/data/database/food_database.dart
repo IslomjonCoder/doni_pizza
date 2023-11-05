@@ -1,8 +1,7 @@
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
-import 'package:sqflite/sqflite.dart';
-// ignore: depend_on_referenced_packages
-import 'package:path/path.dart';
 
 class LocalDatabase {
   static final LocalDatabase instance = LocalDatabase._privateConstructor();
@@ -28,37 +27,40 @@ class LocalDatabase {
   Future<void> _createDatabase(Database db, int version) async {
     await db.execute('''
       CREATE TABLE IF NOT EXISTS food_table (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         name TEXT,
         description TEXT,
-        imagePath TEXT,
+        imageUrl TEXT,
         price REAL,
+        category TEXT,
         count INTEGER DEFAULT 1
-        
       )
     ''');
   }
 
-  Future<int> insertFood(FoodItem foodItem) async {
-    final db = await database;
+  Future<void> insertFood(FoodItem foodItem) async {
+    try {
+      final db = await database;
 
-    final existingProducts =
-        await db.query('food_table', where: 'name = ?', whereArgs: [foodItem.name]);
+      final existingProducts =
+          await db.query('food_table', where: 'id = ?', whereArgs: [foodItem.id]);
 
-    if (existingProducts.isNotEmpty) {
-      final existingProduct = existingProducts.first;
-      final existingCount = existingProduct['count'] as int?;
-      final updatedCount = (existingCount ?? 0) + 1;
-      await db.update(
-        'food_table',
-        {'count': updatedCount},
-        where: 'name = ?',
-        whereArgs: [foodItem.name],
-      );
-    } else {
-      await db.insert('food_table', foodItem.toJson());
+      if (existingProducts.isNotEmpty) {
+        final existingProduct = existingProducts.first;
+        final existingCount = existingProduct['count'] as int?;
+        final updatedCount = (existingCount ?? 0) + 1;
+        await db.update(
+          'food_table',
+          {'count': updatedCount},
+          where: 'id = ?',
+          whereArgs: [foodItem.id],
+        );
+      } else {
+        await db.insert('food_table', foodItem.toJson());
+      }
+    } catch (e) {
+      print("Error insert: $e");
     }
-    return 0;
   }
 
   Future<double> calculateTotalCost() async {
@@ -75,29 +77,36 @@ class LocalDatabase {
   }
 
   Future<List<OrderItem>> fetchAllFoodItems() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('food_table');
-    return List.generate(maps.length, (index) {
-      return OrderItem.fromJson(maps[index]);
-    });
+    try {
+      final db = await database;
+      final List<Map<String, dynamic>> maps = await db.query('food_table');
+      return List.generate(maps.length, (index) {
+        final foodItem = FoodItem.fromJson(maps[index]);
+        final quantity = maps[index]['count'] as int;
+        return OrderItem(food: foodItem, quantity: quantity);
+      });
+    } catch (e) {
+      print("Error: $e");
+      throw Exception('Error fetching all food items: $e');
+    }
   }
 
-  Future<void> updateFoodByCount(String description, int newCount) async {
+  Future<void> updateFoodByCount(String id, int newCount) async {
     final db = await database;
     await db.update(
       'food_table',
       {'count': newCount},
-      where: 'description = ?',
-      whereArgs: [description],
+      where: 'id = ?',
+      whereArgs: [id],
     );
   }
 
-  Future<void> deleteFood(String description) async {
+  Future<void> deleteFood(String id) async {
     final db = await database;
     await db.delete(
       'food_table',
-      where: 'description = ?',
-      whereArgs: [description],
+      where: 'id = ?',
+      whereArgs: [id],
     );
   }
 

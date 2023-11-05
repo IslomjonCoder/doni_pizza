@@ -1,13 +1,28 @@
 import 'package:doni_pizza/data/models/category_model.dart';
 import 'package:doni_pizza/utils/helpers/uid.dart';
+import 'package:hive/hive.dart';
 
-class FoodItem {
-  final String? id;
-  final String name;
-  final String description;
-  final double price;
-  final String imageUrl;
-  final CategoryModel category;
+part 'food_model.g.dart';
+
+@HiveType(typeId: 1)
+class FoodItem extends HiveObject {
+  @HiveField(0)
+  String? id;
+
+  @HiveField(1)
+  String name;
+
+  @HiveField(2)
+  String description;
+
+  @HiveField(3)
+  double price;
+
+  @HiveField(4)
+  String imageUrl;
+
+  @HiveField(5)
+  CategoryModel category;
 
   FoodItem({
     this.id,

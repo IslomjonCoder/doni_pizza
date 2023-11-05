@@ -230,33 +230,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 } else if (state is PromotionLoaded) {
                   return CarouselSlider(
-                      options: CarouselOptions(
-                        height: 150,
-                        autoPlay: true,
-
-                        // enlargeCenterPage: true,
-                        // viewportFraction: 0.8,
-                      ),
-                      items: List.generate(
-                          3,
-                          (index) => Expanded(
-                                child: Container(
-                                  child: CachedNetworkImage(
-                                    imageUrl: state.promotions[index].imageUrl,
-                                    fit: BoxFit.scaleDown,
-                                  ),
-                                ),
-                              )).toList());
-                  // items: state.promotions.map((promotion) {
-                  //   return Container(
-                  //       margin: const EdgeInsets.symmetric(horizontal: 10),
-                  //       decoration: BoxDecoration(
-                  //         borderRadius: BorderRadius.circular(12)
-                  //       ),
-                  //       child: CachedNetworkImage(
-                  //         imageUrl: promotion.imageUrl,
-                  //       ));
-                  // }).toList());
+                      options: CarouselOptions(height: 150, autoPlay: true),
+                      items: state.promotions.map((promotion) {
+                        return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                            child: CachedNetworkImage(
+                              imageUrl: promotion.imageUrl,
+                            ));
+                      }).toList());
                 } else if (state is PromotionError) {
                   return Center(child: Text(state.error));
                 }
@@ -318,93 +300,72 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   );
                                 },
-                                child: SizedBox(
-                                  height: MediaQuery.of(context).size.height / 6,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 15.0),
-                                    child: Center(
-                                      child: Hero(
-                                        tag: 'product_${item.name}',
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(12.0),
-                                          child: Image.asset(
-                                            item.imageUrl,
-                                            errorBuilder: (context, error, stackTrace) {
-                                              return Image.asset(AppImages.burger);
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                child: Hero(
+                                  tag: 'product_${item.name}',
+                                  child: Image.asset(
+                                    item.imageUrl,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(AppImages.burger);
+                                    },
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.name,
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Sora',
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      item.description,
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(8.0),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(16),
-                                            color: Colors.white.withOpacity(0.2),
-                                          ),
-                                          child: Text(
-                                            '${item.price.toStringAsFixed(2)} ${LocaleKeys.usd.tr()}',
-                                            style: const TextStyle(color: Colors.white),
-                                          ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item.name,
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Sora',
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    item.description,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(16),
+                                          color: Colors.white.withOpacity(0.2),
                                         ),
-                                        ZoomTapAnimation(
-                                          onTap: () {
-                                            context.read<FoodBloc>().add(AddFoodEvent(FoodItem(
-                                                  name: item.name,
-                                                  description: item.description,
-                                                  imageUrl: item.imageUrl,
-                                                  price: item.price,
-                                                  category: categories[0],
-                                                )));
-                                            Fluttertoast.showToast(
-                                              msg: LocaleKeys.successfully_added_to_cart.tr(),
-                                              toastLength: Toast.LENGTH_SHORT,
-                                              gravity: ToastGravity.BOTTOM,
-                                              backgroundColor: Colors.white,
-                                              textColor: Colors.black,
-                                              fontSize: 16.0,
-                                            );
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.all(2),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(12),
-                                              color: Colors.red,
-                                            ),
-                                            child: const Icon(Icons.add),
+                                        child: Text(
+                                          '${item.price.toStringAsFixed(2)} ${LocaleKeys.usd.tr()}',
+                                          style: const TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                      ZoomTapAnimation(
+                                        onTap: () {
+                                          context.read<FoodBloc>().add(AddFoodEvent(item));
+                                          Fluttertoast.showToast(
+                                            msg: LocaleKeys.successfully_added_to_cart.tr(),
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            backgroundColor: Colors.white,
+                                            textColor: Colors.black,
+                                            fontSize: 16.0,
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(12),
+                                            color: Colors.red,
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                          child: const Icon(Icons.add),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
                               ),
                             ],
                           ),

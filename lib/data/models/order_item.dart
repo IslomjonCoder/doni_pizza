@@ -1,8 +1,15 @@
 import 'package:doni_pizza/data/models/food_model.dart';
+import 'package:hive/hive.dart';
 
-class OrderItem {
-  final FoodItem food;
-  final int quantity;
+part 'order_item.g.dart';
+
+@HiveType(typeId: 0)
+class OrderItem extends HiveObject {
+  @HiveField(0)
+  FoodItem food;
+
+  @HiveField(1)
+  int quantity;
 
   double get totalPrice => food.price * quantity;
 
