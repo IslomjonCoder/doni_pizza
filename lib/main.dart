@@ -27,6 +27,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+//Add code comments for the code snippet
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
@@ -88,3 +89,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+// write login app design

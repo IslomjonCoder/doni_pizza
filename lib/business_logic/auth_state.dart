@@ -1,3 +1,4 @@
+import 'package:doni_pizza/data/models/user_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -5,6 +6,7 @@ enum Status { initial, loading, success, failure }
 
 class AuthState extends Equatable {
   final User? user;
+  final UserModel? userModel;
   final String? error;
   final Status signInWithGoogleStatus;
   final Status signInWithEmailAndPasswordStatus;
@@ -12,6 +14,7 @@ class AuthState extends Equatable {
 
   const AuthState({
     this.user,
+    this.userModel,
     this.error,
     this.signInWithGoogleStatus = Status.initial,
     this.signInWithEmailAndPasswordStatus = Status.initial,
@@ -20,6 +23,7 @@ class AuthState extends Equatable {
 
   AuthState copyWith({
     User? user,
+    UserModel? userModel,
     String? error,
     Status? signInWithGoogleStatus,
     Status? signInWithEmailAndPasswordStatus,
@@ -28,6 +32,7 @@ class AuthState extends Equatable {
     return AuthState(
       user: user ?? this.user,
       error: error ?? this.error,
+      userModel: userModel ?? this.userModel,
       signInWithGoogleStatus: signInWithGoogleStatus ?? this.signInWithGoogleStatus,
       signInWithEmailAndPasswordStatus:
           signInWithEmailAndPasswordStatus ?? this.signInWithEmailAndPasswordStatus,
@@ -40,6 +45,7 @@ class AuthState extends Equatable {
   List<Object?> get props => [
         user,
         error,
+        userModel,
         signInWithGoogleStatus,
         signInWithEmailAndPasswordStatus,
         registerWithEmailAndPasswordStatus

@@ -4,14 +4,14 @@ class UserModel {
   final String id;
   final String name;
   final String phoneNumber;
-  final String imageUrl;
+  final String? imageUrl;
   final String password;
 
   UserModel({
     required this.id,
     required this.name,
     required this.phoneNumber,
-    required this.imageUrl,
+    this.imageUrl,
     required this.password,
   });
 
@@ -46,7 +46,7 @@ class UserModel {
       id: snapshot.id,
       name: map['name'] as String,
       phoneNumber: map['phoneNumber'] as String,
-      imageUrl: map['imageUrl'] as String,
+      imageUrl: map['imageUrl'] as String?,
       password: map['password'] as String,
     );
   }

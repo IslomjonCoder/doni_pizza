@@ -10,6 +10,9 @@ class OrderModel {
   final double totalPrice;
   final OrderStatus status;
   final DateTime timestamp;
+  final String phone;
+  final PaymentMethod paymentMethod;
+  final String? address;
 
   const OrderModel({
     this.id,
@@ -18,6 +21,9 @@ class OrderModel {
     required this.totalPrice,
     required this.status,
     required this.timestamp,
+    required this.phone,
+    required this.paymentMethod,
+    this.address,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +37,9 @@ class OrderModel {
       totalPrice: json['totalPrice'].toDouble(),
       status: OrderStatusExtension.fromString(json['status']),
       timestamp: TTimeHelpers.timestampToDateTime(json['timestamp'] as int),
+      phone: json['phone'],
+      paymentMethod: PaymentMethodExtension.fromString(json['paymentMethod']),
+      address: json['address'],
     );
   }
 
@@ -42,6 +51,9 @@ class OrderModel {
       'totalPrice': totalPrice,
       'status': status.stringValue,
       'timestamp': TTimeHelpers.dateTimeToTimestamp(timestamp),
+      'phone': phone,
+      'paymentMethod': paymentMethod.name,
+      'address': address,
     };
   }
 
@@ -52,6 +64,9 @@ class OrderModel {
     double? totalPrice,
     OrderStatus? status,
     DateTime? timestamp,
+    String? phone,
+    PaymentMethod? paymentMethod,
+    String? address,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -60,6 +75,9 @@ class OrderModel {
       totalPrice: totalPrice ?? this.totalPrice,
       status: status ?? this.status,
       timestamp: timestamp ?? this.timestamp,
+      phone: phone ?? this.phone,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      address: address ?? this.address,
     );
   }
 }

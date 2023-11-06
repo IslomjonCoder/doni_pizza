@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:dot_navigation_bar/dot_navigation_bar.dart';
@@ -27,14 +28,14 @@ class TabBoxState extends State<TabBox> {
         onTap: context.read<TabCubit>().changeTab,
         unselectedItemColor: Colors.grey,
         selectedItemColor: Colors.grey[800],
-        items: [
+        items: const [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
+            icon: Icon(Icons.home),
             label: 'Home',
             // // selectedColor: Colors.black,
           ),
           BottomNavigationBarItem(
-            icon: const Badge(
+            icon: Badge(
               label: Text('7'),
               child: Icon(Icons.shopping_cart),
             ),
@@ -42,7 +43,7 @@ class TabBoxState extends State<TabBox> {
             // selectedColor: Colors.black,
           ),
           BottomNavigationBarItem(
-            icon: const Badge(
+            icon: Badge(
               label: Text('1'),
               child: Icon(Icons.access_time_outlined),
             ),
@@ -50,7 +51,7 @@ class TabBoxState extends State<TabBox> {
             // selectedColor: Colors.black,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
+            icon: Icon(Icons.person),
             // selectedColor: Colors.black,
             label: 'Profile',
           ),

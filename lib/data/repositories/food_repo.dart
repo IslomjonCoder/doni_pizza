@@ -67,7 +67,7 @@ class FoodItemRepository {
   /// Adds a new food item to the Firestore collection.
   Future<void> addFoodItem(FoodItem foodItem) async {
     try {
-      await _firestore.collection(_foodItemsCollection).add(foodItem.toJson());
+      await _firestore.collection(_foodItemsCollection).doc(foodItem.id).set(foodItem.toJson());
     } catch (e) {
       throw Exception('Error adding food item: $e');
     }

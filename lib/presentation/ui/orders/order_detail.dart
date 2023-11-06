@@ -1,8 +1,15 @@
+import 'package:doni_pizza/business_logic/auth_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/order_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
+import 'package:doni_pizza/data/models/order_model.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
+import 'package:doni_pizza/presentation/ui/profile_screen/widget/edit_profile.dart';
 import 'package:doni_pizza/presentation/widgets/global_textfield.dart';
+import 'package:doni_pizza/utils/constants/enums.dart';
+// import 'package:doni_pizza/utils/constants/enums.dart';
+import 'package:doni_pizza/utils/helpers/time_heplers.dart';
+import 'package:doni_pizza/utils/helpers/uid.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +32,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   TextEditingController addressController = TextEditingController();
   TextEditingController recipientPhoneController = TextEditingController();
 
-  double calculateTotalPrice(List<OrderItem> foodItems) =>
-      foodItems.fold(0, (previousValue, element) => previousValue + element.totalPrice);
+  double calculateTotalPrice() {
+    return widget.foodItems.fold(0, (previousValue, element) => previousValue + element.totalPrice);
+  }
 
   // void orderNow({double? newTotalCost}) async {
   //   final orderDate = DateTime.now();
@@ -77,163 +85,173 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        centerTitle: false,
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          centerTitle: false,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          title: Text(
-            LocaleKeys.orderDetail.tr(),
-            style: const TextStyle(
-              color: Colors.black,
-              fontFamily: 'Sora',
-              fontWeight: FontWeight.w600,
-              fontSize: 30,
-            ),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: Text(
+          LocaleKeys.orderDetail.tr(),
+          style: const TextStyle(
+            color: Colors.black,
+            fontFamily: 'Sora',
+            fontWeight: FontWeight.w600,
+            fontSize: 30,
           ),
         ),
-        body: Center(
-          child: Text('Order'),
-        ) /*SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Padding(
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ListTile(
+                  title: Text(LocaleKeys.recipient.tr(), style: const TextStyle(fontSize: 18)),
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                ),
+              ),
+              RadioListTile<OrderRecipient>(
+                activeColor: Colors.black,
+                title: Text(LocaleKeys.me.tr()),
+                value: OrderRecipient.me,
+                groupValue: _selectedRecipient,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedRecipient = value!;
+                  });
+                },
+              ),
+              RadioListTile<OrderRecipient>(
+                activeColor: Colors.black,
+                title: Text(LocaleKeys.another.tr()),
+                value: OrderRecipient.lovedOne,
+                groupValue: _selectedRecipient,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedRecipient = value!;
+                  });
+                },
+              ),
+              Visibility(
+                visible: _selectedRecipient == OrderRecipient.lovedOne,
+                child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ListTile(
-                    title: Text(LocaleKeys.recipient.tr(), style: const TextStyle(fontSize: 18)),
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
+                  child: GlobalTextField(
+                    hintText: LocaleKeys.recipientPhoneNumber.tr(),
+                    keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.next,
+                    caption: LocaleKeys.mandatory.tr(),
+                    validator: (value) {
+                      if (_selectedRecipient == OrderRecipient.lovedOne && value!.isEmpty) {
+                        return LocaleKeys.phone_number.tr();
+                      }
+                      return null;
+                    },
+                    controller: recipientPhoneController,
                   ),
                 ),
-                RadioListTile<OrderRecipient>(
-                  activeColor: Colors.black,
-                  title: Text(LocaleKeys.me.tr()),
-                  value: OrderRecipient.me,
-                  groupValue: _selectedRecipient,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedRecipient = value!;
-                    });
-                  },
-                ),
-                RadioListTile<OrderRecipient>(
-                  activeColor: Colors.black,
-                  title: Text(LocaleKeys.another.tr()),
-                  value: OrderRecipient.lovedOne,
-                  groupValue: _selectedRecipient,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedRecipient = value!;
-                    });
-                  },
-                ),
-                Visibility(
-                  visible: _selectedRecipient == OrderRecipient.lovedOne,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: GlobalTextField(
-                      hintText: LocaleKeys.recipientPhoneNumber.tr(),
-                      keyboardType: TextInputType.phone,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    GlobalTextField(
+                      hintText: LocaleKeys.enterAddress.tr(),
+                      keyboardType: TextInputType.streetAddress,
                       textInputAction: TextInputAction.next,
                       caption: LocaleKeys.mandatory.tr(),
                       validator: (value) {
-                        if (_selectedRecipient == OrderRecipient.lovedOne && value!.isEmpty) {
-                          return LocaleKeys.phone_number.tr();
+                        if (value!.isEmpty) {
+                          return LocaleKeys.addressMandatory.tr();
                         }
                         return null;
                       },
-                      controller: recipientPhoneController,
+                      controller: addressController,
                     ),
-                  ),
+                    ListTile(
+                      title:
+                          Text(LocaleKeys.paymentMethod.tr(), style: const TextStyle(fontSize: 18)),
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    children: [
-                      GlobalTextField(
-                        hintText: LocaleKeys.enterAddress.tr(),
-                        keyboardType: TextInputType.streetAddress,
-                        textInputAction: TextInputAction.next,
-                        caption: LocaleKeys.mandatory.tr(),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return LocaleKeys.addressMandatory.tr();
-                          }
-                          return null;
-                        },
-                        controller: addressController,
-                      ),
-                      ListTile(
-                        title: Text(LocaleKeys.paymentMethod.tr(),
-                            style: const TextStyle(fontSize: 18)),
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                      ),
-                    ],
-                  ),
-                ),
-                RadioListTile<PaymentMethod>(
-                  activeColor: Colors.black,
-                  title: Text(LocaleKeys.cashOnDelivery.tr()),
-                  value: PaymentMethod.cash,
-                  groupValue: _selectedPaymentMethod,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedPaymentMethod = value!;
-                    });
+              ),
+              RadioListTile<PaymentMethod>(
+                activeColor: Colors.black,
+                title: Text(LocaleKeys.cashOnDelivery.tr()),
+                value: PaymentMethod.cash,
+                groupValue: _selectedPaymentMethod,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedPaymentMethod = value!;
+                  });
+                },
+              ),
+              RadioListTile<PaymentMethod>(
+                activeColor: Colors.black,
+                title: Text(LocaleKeys.cardOnDelivery.tr()),
+                value: PaymentMethod.card,
+                groupValue: _selectedPaymentMethod,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedPaymentMethod = value!;
+                  });
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: InkWell(
+                  onTap: () async {
+                    if (_formKey.currentState!.validate()) {
+                      print(context.read<AuthBloc>().state.userModel);
+                      print(context.read<AuthBloc>().state.user);
+
+                      // final order = OrderModel(
+                      //   timestamp: DateTime.now(),
+                      //   status: OrderStatus.pending,
+                      //   id: UidGenerator.generateUID(),
+                      //   userId: context.read<AuthBloc>().state.user?.uid ?? '',
+                      //   items: widget.foodItems,
+                      //   totalPrice: calculateTotalPrice(),
+                      //   phone: (_selectedRecipient == OrderRecipient.me)
+                      //       ? context.read<AuthBloc>().state.user?.phoneNumber ?? ''
+                      //       : recipientPhoneController.text.trim(),
+                      //   paymentMethod: _selectedPaymentMethod,
+                      //   address: addressController.text,
+                      // );
+                    }
                   },
-                ),
-                RadioListTile<PaymentMethod>(
-                  activeColor: Colors.black,
-                  title: Text(LocaleKeys.cardOnDelivery.tr()),
-                  value: PaymentMethod.card,
-                  groupValue: _selectedPaymentMethod,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedPaymentMethod = value!;
-                    });
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: InkWell(
-                    onTap: () {
-                      if (_formKey.currentState!.validate()) {
-                        placeOrderAndDeleteCart(widget.foodItems);
-                        Future.delayed(const Duration(seconds: 4), () {
-                          Navigator.of(context).pop();
-                        });
-                      }
-                    },
-                    borderRadius: BorderRadius.circular(16.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: showLottie
-                              ? const CupertinoActivityIndicator()
-                              : Text(LocaleKeys.confirmOrder.tr()),
-                        ),
+                  borderRadius: BorderRadius.circular(16.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: showLottie
+                            ? const CupertinoActivityIndicator()
+                            : Text(LocaleKeys.confirmOrder.tr()),
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ))*/
-        );
+        ),
+      ),
+    );
   }
 }
 
-enum PaymentMethod { cash, card }
+// enum PaymentMethod { cash, card }
 
 enum OrderRecipient { me, lovedOne }

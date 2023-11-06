@@ -8,7 +8,7 @@ class OrderRepository {
 
   Future<void> createOrder(OrderModel order) async {
     try {
-      await _firestore.collection(_ordersCollection).add(order.toJson());
+      await _firestore.collection(_ordersCollection).doc(order.id).set(order.toJson());
     } catch (e) {
       throw Exception('Error creating order: $e');
     }

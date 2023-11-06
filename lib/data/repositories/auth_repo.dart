@@ -19,7 +19,6 @@ class AuthRepository {
         idToken: googleAuth.idToken,
       );
       final UserCredential authResult = await _auth.signInWithCredential(credential);
-      return authResult.user;
     } on FirebaseAuthException catch (e) {
       TLoggerHelper.error(e.message!);
       throw Exception(e.message);
@@ -28,6 +27,7 @@ class AuthRepository {
       throw Exception('Error signing in with Google: $e');
       // return null;
     }
+    return null;
   }
 
   Future<User?> registerWithEmailAndPassword(String email, String password) async {

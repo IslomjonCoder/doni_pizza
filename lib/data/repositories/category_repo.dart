@@ -25,7 +25,7 @@ class CategoryRepository {
   /// Adds a new category to the Firestore collection.
   Future<void> addCategory(CategoryModel category) async {
     try {
-      await _firestore.collection(_categoriesCollection).add(category.toJson());
+      await _firestore.collection(_categoriesCollection).doc(category.id).set(category.toJson());
     } catch (e) {
       throw Exception('Error adding category: $e');
     }

@@ -1,4 +1,7 @@
 import 'package:doni_pizza/business_logic/auth_event.dart';
+import 'package:doni_pizza/data/models/user_model.dart';
+import 'package:doni_pizza/data/repositories/user_repo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doni_pizza/business_logic/auth_state.dart';
 import 'package:doni_pizza/data/repositories/auth_repo.dart';
@@ -6,6 +9,7 @@ import 'package:doni_pizza/utils/formatters/formatter.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
+  final UserRepository userRepository = UserRepository();
 
   AuthBloc(this.authRepository) : super(const AuthState()) {
     on<LoginEvent>((_signInWithEmailAndPassword));
@@ -28,6 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await authRepository.signInWithEmailAndPassword(
           TFormatter.convertPhoneNumberToEmail(event.phoneNumber), event.password);
+
       emit(state.copyWith(user: user, signInWithEmailAndPasswordStatus: Status.success));
     } catch (e) {
       emit(state.copyWith(error: e.toString(), signInWithEmailAndPasswordStatus: Status.failure));
@@ -39,6 +44,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await authRepository.registerWithEmailAndPassword(
           TFormatter.convertPhoneNumberToEmail(event.phoneNumber), event.password);
+      await userRepository.storeUserData(UserModel(
+          id: user!.uid,
+          name: event.name,
+          phoneNumber: event.phoneNumber,
+          imageUrl: '',
+          password: event.password));
       emit(state.copyWith(user: user, registerWithEmailAndPasswordStatus: Status.success));
     } catch (e) {
       emit(state.copyWith(error: e.toString(), registerWithEmailAndPasswordStatus: Status.failure));

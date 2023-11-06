@@ -8,7 +8,7 @@ class PromotionRepository {
   // Add a new promotion to Firestore.
   Future<void> addPromotion(Promotion promotion) async {
     try {
-      await _firestore.collection(_collectionName).add({
+      await _firestore.collection(_collectionName).doc(promotion.id).set({
         'id': promotion.id,
         'title': promotion.title,
         'description': promotion.description,

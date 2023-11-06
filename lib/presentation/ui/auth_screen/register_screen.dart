@@ -38,7 +38,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   String? passwordsMatch(String? value) {
-    if (passwordController.text.length < TSizes.customPaddingSm) {
+    if (passwordController.text.length < 8) {
       return LocaleKeys.passwordLengthError.tr();
     }
 
