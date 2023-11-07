@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 
-import '../../../widgets/global_textfield.dart';
+import 'package:doni_pizza/presentation/widgets/global_textfield.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});

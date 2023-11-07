@@ -26,6 +26,28 @@ class OrderRepository {
     });
   }
 
+  Future<OrderModel> getOrder(String orderId) async {
+    try {
+      final snapshot = await _firestore.collection('orders').doc(orderId).get();
+      if (snapshot.exists) {
+        return OrderModel.fromJson(snapshot.data()!);
+      }
+      throw Exception('Order not found');
+    } catch (e) {
+      throw Exception('Error fetching order: $e');
+    }
+  }
+
+  Future<List<OrderModel>> getOrdersForUser(String userId) async {
+    try {
+      final querySnapshot =
+          await _firestore.collection('orders').where('userId', isEqualTo: userId).get();
+      return querySnapshot.docs.map((doc) => OrderModel.fromJson(doc.data())).toList();
+    } catch (e) {
+      throw Exception('Error fetching orders: $e');
+    }
+  }
+
   Future<void> updateOrder(OrderModel order) async {
     try {
       await _firestore.collection(_ordersCollection).doc(order.id).update(order.toJson());

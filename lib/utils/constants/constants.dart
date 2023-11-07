@@ -1,12 +1,6 @@
 import 'package:doni_pizza/data/models/category_model.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
 import 'package:doni_pizza/utils/helpers/uid.dart';
-import 'package:doni_pizza/utils/helpers/uid.dart';
-import 'package:doni_pizza/utils/helpers/uid.dart';
-import 'package:doni_pizza/utils/helpers/uid.dart';
-import 'package:doni_pizza/utils/helpers/uid.dart';
-import 'package:doni_pizza/utils/helpers/uid.dart';
-import 'package:doni_pizza/utils/helpers/uid.dart';
 
 final List<CategoryModel> categories = [
   CategoryModel(

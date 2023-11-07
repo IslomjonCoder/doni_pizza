@@ -1,14 +1,17 @@
 import 'package:doni_pizza/business_logic/auth_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/order_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
+import 'package:doni_pizza/business_logic/blocs/order_bloc/order_remote_bloc.dart';
+import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
+import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
+import 'package:doni_pizza/data/database/user_service_hive.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
 import 'package:doni_pizza/data/models/order_model.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:doni_pizza/presentation/ui/profile_screen/widget/edit_profile.dart';
+import 'package:doni_pizza/presentation/ui/tab_box/tab_box.dart';
 import 'package:doni_pizza/presentation/widgets/global_textfield.dart';
 import 'package:doni_pizza/utils/constants/enums.dart';
-// import 'package:doni_pizza/utils/constants/enums.dart';
-import 'package:doni_pizza/utils/helpers/time_heplers.dart';
 import 'package:doni_pizza/utils/helpers/uid.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,7 +25,7 @@ class OrderDetailScreen extends StatefulWidget {
   const OrderDetailScreen({super.key, required this.foodItems});
 
   @override
-  State<OrderDetailScreen> createState() => _OrderDetailScreenState();
+  _OrderDetailScreenState createState() => _OrderDetailScreenState();
 }
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
@@ -32,55 +35,62 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   TextEditingController addressController = TextEditingController();
   TextEditingController recipientPhoneController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
+  bool showLottie = false;
+
   double calculateTotalPrice() {
     return widget.foodItems.fold(0, (previousValue, element) => previousValue + element.totalPrice);
   }
 
-  // void orderNow({double? newTotalCost}) async {
-  //   final orderDate = DateTime.now();
-  //
-  //   final foodNames = widget.foodItems.map((item) => item.name).join(', ');
-  //
-  //   final order = OrderModel(
-  //     foodNames: foodNames,
-  //     totalCost: newTotalCost ?? 0.0,
-  //     timestamp: orderDate.toString(),
-  //   );
-  //
-  //   context.read<OrderBloc>().add(AddOrderEvent(order));
-  // }
+  Future<void> placeOrder() async {
+    if (_formKey.currentState!.validate()) {
+      final userModel = await HiveService.getUserModelFromHive();
+      if (userModel != null) {
+        if (!context.mounted) return;
+        final order = OrderModel(
+          timestamp: DateTime.now(),
+          status: OrderStatus.pending,
+          id: UidGenerator.generateUID(),
+          userId: context.read<AuthCubit>().state.user?.uid ?? '',
+          items: widget.foodItems,
+          totalPrice: calculateTotalPrice(),
+          phone: _selectedRecipient == OrderRecipient.me
+              ? userModel.phoneNumber
+              : recipientPhoneController.text.trim(),
+          paymentMethod: _selectedPaymentMethod,
+          address: addressController.text,
+        );
+        print(order.toString());
+        context.read<OrderRemoteBloc>().add(CreateOrderEvent(order));
+      }
 
-  bool showLottie = false;
-
-  // void placeOrderAndDeleteCart(List<FoodModel> foodItems) async {
-  //   setState(() {
-  //     showLottie = true;
-  //   });
-  //
-  //   await Future.delayed(const Duration(seconds: 4));
-  //
-  //   double newTotalCost = calculateTotalPrice(foodItems);
-  //
-  //   orderNow(newTotalCost: newTotalCost);
-  //
-  //   Fluttertoast.showToast(
-  //     timeInSecForIosWeb: 3,
-  //     msg: LocaleKeys.orderSuccess.tr(),
-  //     toastLength: Toast.LENGTH_LONG,
-  //     gravity: ToastGravity.CENTER_RIGHT,
-  //     backgroundColor: Colors.white,
-  //     textColor: Colors.black,
-  //     fontSize: 22.0,
-  //   );
-  //   // ignore: use_build_context_synchronously
-  //   context.read<FoodBloc>().add(DeleteFoods());
-  //
-  //   setState(() {
-  //     showLottie = false;
-  //   });
-  // }
-
-  final _formKey = GlobalKey<FormState>();
+      if (userModel == null) {
+        if (!context.mounted) return;
+        final result = await showEditProfileDialog(context);
+        if (!context.mounted) return;
+        if (result != null) {
+          final name = result['name'] ?? '';
+          final phoneNumber = result['phoneNumber'] ?? '';
+          final order = OrderModel(
+            timestamp: DateTime.now(),
+            status: OrderStatus.pending,
+            id: UidGenerator.generateUID(),
+            userId: context.read<AuthCubit>().state.user?.uid ?? '',
+            items: widget.foodItems,
+            totalPrice: calculateTotalPrice(),
+            phone: _selectedRecipient == OrderRecipient.me
+                ? phoneNumber
+                : recipientPhoneController.text.trim(),
+            paymentMethod: _selectedPaymentMethod,
+            address: addressController.text,
+          );
+          print(order.toString());
+          context.read<OrderRemoteBloc>().add(CreateOrderEvent(order));
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,150 +111,168 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: ListTile(
-                  title: Text(LocaleKeys.recipient.tr(), style: const TextStyle(fontSize: 18)),
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
+      body: BlocListener<OrderRemoteBloc, OrderRemoteState>(
+        listener: (context, state) {
+          if (state is OrderCreatedState) {
+            Fluttertoast.showToast(
+              msg: LocaleKeys.orderCreated.tr(),
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+            );
+            context.read<FoodBloc>().add(ClearCartEvent());
+            context.read<TabCubit>().changeTab(0);
+            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TabBox(),
                 ),
-              ),
-              RadioListTile<OrderRecipient>(
-                activeColor: Colors.black,
-                title: Text(LocaleKeys.me.tr()),
-                value: OrderRecipient.me,
-                groupValue: _selectedRecipient,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedRecipient = value!;
-                  });
+                (route) => false);
+          } else if (state is OrderRemoteErrorState) {
+            Fluttertoast.showToast(
+              msg: state.error,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+            );
+          } else if (state is OrderRemoteLoading) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return const Center(child: CircularProgressIndicator());
                 },
-              ),
-              RadioListTile<OrderRecipient>(
-                activeColor: Colors.black,
-                title: Text(LocaleKeys.another.tr()),
-                value: OrderRecipient.lovedOne,
-                groupValue: _selectedRecipient,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedRecipient = value!;
-                  });
-                },
-              ),
-              Visibility(
-                visible: _selectedRecipient == OrderRecipient.lovedOne,
-                child: Padding(
+                barrierDismissible: false);
+          }
+        },
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: GlobalTextField(
-                    hintText: LocaleKeys.recipientPhoneNumber.tr(),
-                    keyboardType: TextInputType.phone,
-                    textInputAction: TextInputAction.next,
-                    caption: LocaleKeys.mandatory.tr(),
-                    validator: (value) {
-                      if (_selectedRecipient == OrderRecipient.lovedOne && value!.isEmpty) {
-                        return LocaleKeys.phone_number.tr();
-                      }
-                      return null;
-                    },
-                    controller: recipientPhoneController,
+                  child: ListTile(
+                    title: Text(LocaleKeys.recipient.tr(), style: const TextStyle(fontSize: 18)),
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: [
-                    GlobalTextField(
-                      hintText: LocaleKeys.enterAddress.tr(),
-                      keyboardType: TextInputType.streetAddress,
+                RadioListTile<OrderRecipient>(
+                  activeColor: Colors.black,
+                  title: Text(LocaleKeys.me.tr()),
+                  value: OrderRecipient.me,
+                  groupValue: _selectedRecipient,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedRecipient = value!;
+                    });
+                  },
+                ),
+                RadioListTile<OrderRecipient>(
+                  activeColor: Colors.black,
+                  title: Text(LocaleKeys.another.tr()),
+                  value: OrderRecipient.lovedOne,
+                  groupValue: _selectedRecipient,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedRecipient = value!;
+                    });
+                  },
+                ),
+                Visibility(
+                  visible: _selectedRecipient == OrderRecipient.lovedOne,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: GlobalTextField(
+                      hintText: LocaleKeys.recipientPhoneNumber.tr(),
+                      keyboardType: TextInputType.phone,
                       textInputAction: TextInputAction.next,
                       caption: LocaleKeys.mandatory.tr(),
                       validator: (value) {
-                        if (value!.isEmpty) {
-                          return LocaleKeys.addressMandatory.tr();
+                        if (_selectedRecipient == OrderRecipient.lovedOne && value!.isEmpty) {
+                          return LocaleKeys.phone_number.tr();
                         }
                         return null;
                       },
-                      controller: addressController,
+                      controller: recipientPhoneController,
                     ),
-                    ListTile(
-                      title:
-                          Text(LocaleKeys.paymentMethod.tr(), style: const TextStyle(fontSize: 18)),
-                      contentPadding: EdgeInsets.zero,
-                      dense: true,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-              RadioListTile<PaymentMethod>(
-                activeColor: Colors.black,
-                title: Text(LocaleKeys.cashOnDelivery.tr()),
-                value: PaymentMethod.cash,
-                groupValue: _selectedPaymentMethod,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedPaymentMethod = value!;
-                  });
-                },
-              ),
-              RadioListTile<PaymentMethod>(
-                activeColor: Colors.black,
-                title: Text(LocaleKeys.cardOnDelivery.tr()),
-                value: PaymentMethod.card,
-                groupValue: _selectedPaymentMethod,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedPaymentMethod = value!;
-                  });
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: InkWell(
-                  onTap: () async {
-                    if (_formKey.currentState!.validate()) {
-                      print(context.read<AuthBloc>().state.userModel);
-                      print(context.read<AuthBloc>().state.user);
-
-                      // final order = OrderModel(
-                      //   timestamp: DateTime.now(),
-                      //   status: OrderStatus.pending,
-                      //   id: UidGenerator.generateUID(),
-                      //   userId: context.read<AuthBloc>().state.user?.uid ?? '',
-                      //   items: widget.foodItems,
-                      //   totalPrice: calculateTotalPrice(),
-                      //   phone: (_selectedRecipient == OrderRecipient.me)
-                      //       ? context.read<AuthBloc>().state.user?.phoneNumber ?? ''
-                      //       : recipientPhoneController.text.trim(),
-                      //   paymentMethod: _selectedPaymentMethod,
-                      //   address: addressController.text,
-                      // );
-                    }
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    children: [
+                      GlobalTextField(
+                        hintText: LocaleKeys.enterAddress.tr(),
+                        keyboardType: TextInputType.streetAddress,
+                        textInputAction: TextInputAction.next,
+                        caption: LocaleKeys.mandatory.tr(),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return LocaleKeys.addressMandatory.tr();
+                          }
+                          return null;
+                        },
+                        controller: addressController,
+                      ),
+                      ListTile(
+                        title: Text(LocaleKeys.paymentMethod.tr(),
+                            style: const TextStyle(fontSize: 18)),
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                      ),
+                    ],
+                  ),
+                ),
+                RadioListTile<PaymentMethod>(
+                  activeColor: Colors.black,
+                  title: Text(LocaleKeys.cashOnDelivery.tr()),
+                  value: PaymentMethod.cash,
+                  groupValue: _selectedPaymentMethod,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedPaymentMethod = value!;
+                    });
                   },
-                  borderRadius: BorderRadius.circular(16.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: showLottie
-                            ? const CupertinoActivityIndicator()
-                            : Text(LocaleKeys.confirmOrder.tr()),
+                ),
+                RadioListTile<PaymentMethod>(
+                  activeColor: Colors.black,
+                  title: Text(LocaleKeys.cardOnDelivery.tr()),
+                  value: PaymentMethod.card,
+                  groupValue: _selectedPaymentMethod,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedPaymentMethod = value!;
+                    });
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: InkWell(
+                    onTap: placeOrder,
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: showLottie
+                              ? const CupertinoActivityIndicator()
+                              : Text(LocaleKeys.confirmOrder.tr()),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -252,6 +280,76 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 }
 
-// enum PaymentMethod { cash, card }
-
 enum OrderRecipient { me, lovedOne }
+
+Future<Map<String, String>?> showEditProfileDialog(BuildContext context) async {
+  final result = await showDialog<Map<String, String>?>(
+    context: context,
+    builder: (BuildContext context) {
+      final result = {
+        'name': '',
+        'phoneNumber': '',
+      };
+
+      return AlertDialog(
+        title: Text(LocaleKeys.editProfile.tr()),
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(16),
+          ),
+        ),
+        contentPadding: const EdgeInsets.all(16),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              decoration: InputDecoration(
+                hintText: LocaleKeys.name.tr(),
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return LocaleKeys.mandatory.tr();
+                }
+                return null;
+              },
+              onChanged: (value) {
+                result['name'] = value;
+              },
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                hintText: LocaleKeys.phone_number.tr(),
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return LocaleKeys.phone_number.tr();
+                }
+                return null;
+              },
+              onChanged: (value) {
+                result['phoneNumber'] = value;
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, null);
+            },
+            child: Text(LocaleKeys.cancel.tr()),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, result);
+            },
+            child: Text(LocaleKeys.ok.tr()),
+          ),
+        ],
+      );
+    },
+  );
+
+  return result;
+}

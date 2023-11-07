@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:dot_navigation_bar/dot_navigation_bar.dart';
@@ -28,16 +29,26 @@ class TabBoxState extends State<TabBox> {
         onTap: context.read<TabCubit>().changeTab,
         unselectedItemColor: Colors.grey,
         selectedItemColor: Colors.grey[800],
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
             // // selectedColor: Colors.black,
           ),
           BottomNavigationBarItem(
-            icon: Badge(
-              label: Text('7'),
-              child: Icon(Icons.shopping_cart),
+            icon: BlocBuilder<FoodBloc, FoodState>(
+              builder: (context, state) {
+                if (state is FoodLoadedState) {
+                  if (state.foods.isEmpty) {
+                    return const Icon(Icons.shopping_cart);
+                  }
+                  return Badge(
+                    label: Text(state.foods.length.toString()),
+                    child: const Icon(Icons.shopping_cart),
+                  );
+                }
+                return const Icon(Icons.shopping_cart);
+              },
             ),
             label: 'Cart',
             // selectedColor: Colors.black,

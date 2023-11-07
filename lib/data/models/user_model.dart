@@ -1,10 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive/hive.dart';
 
+part 'user_model.g.dart';
+
+@HiveType(typeId: 3)
 class UserModel {
+  @HiveField(0)
   final String id;
+  @HiveField(1)
   final String name;
+  @HiveField(2)
   final String phoneNumber;
+  @HiveField(3)
   final String? imageUrl;
+  @HiveField(4)
   final String password;
 
   UserModel({
@@ -49,5 +58,10 @@ class UserModel {
       imageUrl: map['imageUrl'] as String?,
       password: map['password'] as String,
     );
+  }
+
+  @override
+  String toString() {
+    return 'UserModel{id: $id, name: $name, phoneNumber: $phoneNumber, imageUrl: $imageUrl, password: $password}';
   }
 }

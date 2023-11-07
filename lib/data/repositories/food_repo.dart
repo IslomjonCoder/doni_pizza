@@ -49,7 +49,7 @@ class FoodItemRepository {
       final querySnapshot = await _firestore
           .collection(_foodItemsCollection)
           .where('name', isGreaterThanOrEqualTo: query)
-          .where('name', isLessThan: query + "\uf8ff")
+          .where('name', isLessThan: "$query\uf8ff")
           .get();
       print(querySnapshot.docs.length);
       if (querySnapshot.docs.isNotEmpty) {

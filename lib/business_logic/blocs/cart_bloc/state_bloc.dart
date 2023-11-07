@@ -49,6 +49,10 @@ class DecrementCountEvent extends FoodEvent {
   DecrementCountEvent(this.food);
 }
 
+class ClearCartEvent extends FoodEvent {
+  ClearCartEvent();
+}
+
 // States
 abstract class FoodState {}
 
@@ -82,6 +86,7 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
     on<DeleteFood>(_handleDeleteFoodEvent);
     on<IncrementCountEvent>(_handleIncrementCountEvent);
     on<DecrementCountEvent>(_handleDecrementCountEvent);
+    on<ClearCartEvent>(_handleClearCartEvent);
   }
 
   void _handleLoadTodosEvent(LoadTodosEvent event, Emitter<FoodState> emit) {
@@ -95,6 +100,12 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
     } catch (e) {
       emit(FoodErrorState('Failed to add food: $e'));
     }
+  }
+
+  void _handleClearCartEvent(ClearCartEvent event, Emitter<FoodState> emit) {
+    foodBox.clear();
+    print(foodBox.values.toList());
+    emit(FoodLoadedState([]));
   }
 
   void _handleIncrementCountEvent(IncrementCountEvent event, Emitter<FoodState> emit) {
