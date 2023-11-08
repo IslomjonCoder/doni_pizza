@@ -95,10 +95,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
       //               itemBuilder: (context, index) {
       //                 final order = orders[index];
       //                 // final timestamp = DateTime.parse(order.timestamp);
-      //                 final formattedTimestamp = DateFormat('yyyy-MM-dd HH:mm').format(timestamp);
+      //                 // final formattedTimestamp = DateFormat('yyyy-MM-dd HH:mm').format(timestamp);
       //                 return ListTile(
       //                   title: Text(
-      //                     order.foodNames,
+      //                     order.totalPrice,
       //                     style: const TextStyle(
       //                       color: Colors.black,
       //                       fontFamily: 'Sora',

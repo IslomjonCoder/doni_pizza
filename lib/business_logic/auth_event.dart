@@ -10,6 +10,16 @@ class LoginEvent extends AuthEvent {
   });
 }
 
+class UpdateUserDataEvent extends AuthEvent {
+  final String name;
+  final String phoneNumber;
+
+  UpdateUserDataEvent({
+    required this.name,
+    required this.phoneNumber,
+  });
+}
+
 class GoogleLoginEvent extends AuthEvent {}
 
 class RegisterEvent extends AuthEvent {

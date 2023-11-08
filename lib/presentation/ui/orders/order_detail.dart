@@ -139,12 +139,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               backgroundColor: Colors.red,
             );
           } else if (state is OrderRemoteLoading) {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return const Center(child: CircularProgressIndicator());
-                },
-                barrierDismissible: false);
+            loadingDialog(context);
           }
         },
         child: SingleChildScrollView(
@@ -278,6 +273,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       ),
     );
   }
+}
+
+Future<dynamic> loadingDialog(BuildContext context) {
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(child: CircularProgressIndicator());
+      },
+      barrierDismissible: false);
 }
 
 enum OrderRecipient { me, lovedOne }

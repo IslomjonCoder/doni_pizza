@@ -24,11 +24,12 @@ class RouterApp extends StatelessWidget {
         }
       },
       listener: (BuildContext context, AuthState state) async {
+        print('state status: ${state.status}');
         if (state.status == AuthStateEnum.authenticated) {
           // Fetch the UserModel from Hive or Firestore and update the AuthCubit
           final userModel = await updateUserModelFromHiveOrFirestore(context);
 
-          if (!context.mounted) return;
+          // if (!context.mounted) return;
         }
         Navigator.pushAndRemoveUntil(
           context,

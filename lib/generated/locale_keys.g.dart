@@ -56,6 +56,7 @@ abstract class LocaleKeys {
   static const orderDetail = 'order_detail';
   static const recipient = 'recipient';
   static const me = 'me';
+  static const errror = 'errror';
   static const another = 'else';
   static const recipientPhoneNumber = 'recipient_phone_number';
   static const mandatory = 'mandatory';
@@ -66,6 +67,7 @@ abstract class LocaleKeys {
   static const cardOnDelivery = 'card_on_delivery';
   static const confirmOrder = 'confirm_order';
   static const ok = "ok";
+  static const error = "error";
   static const cancel = "cancel";
   static const orderCreated = "order_created";
 }

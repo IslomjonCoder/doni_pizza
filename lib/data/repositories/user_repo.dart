@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doni_pizza/data/models/user_model.dart';
+import 'package:doni_pizza/utils/formatters/formatter.dart';
+import 'package:doni_pizza/utils/helpers/helper_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserRepository {
@@ -11,6 +13,22 @@ class UserRepository {
       await _firestore.collection('users').doc(user.id).set(user.toJson());
     } catch (e) {
       throw Exception('Error storing user data: $e');
+    }
+  }
+
+  Future<UserModel> updateUserData(String name, String phoneNumber) async {
+    try {
+      await FirebaseAuth.instance.currentUser
+          ?.updateEmail(TFormatter.convertPhoneNumberToEmail(phoneNumber));
+      await _firestore
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'name': name, 'phoneNumber': phoneNumber});
+      final user =
+          await _firestore.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+      return UserModel.fromJson(user);
+    } catch (e) {
+      throw Exception('Error updating user data: $e');
     }
   }
 

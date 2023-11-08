@@ -15,6 +15,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginEvent>((_signInWithEmailAndPassword));
     on<GoogleLoginEvent>(_signInWithGoogle);
     on<RegisterEvent>(_registerWithEmailAndPassword);
+    on<UpdateUserDataEvent>(_updateUserData);
+  }
+
+  void _updateUserData(UpdateUserDataEvent event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(userDataUpdateStatus: Status.loading));
+    try {
+      final userModel = await userRepository.updateUserData(event.name, event.phoneNumber);
+      emit(state.copyWith(userDataUpdateStatus: Status.success, userModel: userModel));
+    } catch (e) {
+      emit(state.copyWith(error: e.toString(), userDataUpdateStatus: Status.failure));
+    }
   }
 
   void _signInWithGoogle(GoogleLoginEvent event, Emitter<AuthState> emit) async {
