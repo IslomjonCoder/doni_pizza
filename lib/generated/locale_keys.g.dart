@@ -66,6 +66,11 @@ abstract class LocaleKeys {
   static const cashOnDelivery = 'cash_on_delivery';
   static const cardOnDelivery = 'card_on_delivery';
   static const confirmOrder = 'confirm_order';
+  static const ordered_at = 'ordered_at';
+  static const cancel = 'cancel';
+  static const sure_to_clear_cart = 'sure_to_clear_cart';
+  static const current_orders = 'current_orders';
+  static const all_orders = 'all_orders';
   static const ok = "ok";
   static const error = "error";
   static const cancel = "cancel";

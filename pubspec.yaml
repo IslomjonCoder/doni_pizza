@@ -28,7 +28,7 @@ dependencies:
   uuid: ^4.1.0
   zoom_tap_animation: ^1.1.0
   sqflite: ^2.3.0
-  dot_navigation_bar: ^1.0.2
+  stylish_bottom_bar: ^1.0.3
   url_launcher: ^6.2.1
   fluttertoast: ^8.2.2
   carousel_slider: ^4.2.1
@@ -40,7 +40,7 @@ dependencies:
   hive_flutter: ^1.1.0
   build_runner: ^2.4.6
   hive_generator: ^2.0.1
-
+  awesome_dialog: ^3.0.2
 
 dev_dependencies:
   flutter_test:

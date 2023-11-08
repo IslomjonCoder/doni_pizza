@@ -75,7 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
       if (category == 'All') {
         filteredFoods = allMenuItems;
       } else {
-        filteredFoods = allMenuItems.where((item) => item.category == category).toList();
+        filteredFoods =
+            allMenuItems.where((item) => item.category == category).toList();
       }
     });
   }
@@ -184,8 +185,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       final category = state[index];
                       return GestureDetector(
                         onTap: () {
-                          final all = context.read<CategoryIndexCubit>().state == index;
-                          context.read<CategoryIndexCubit>().changeCategory(all ? -1 : index);
+                          final all =
+                              context.read<CategoryIndexCubit>().state == index;
+                          context
+                              .read<CategoryIndexCubit>()
+                              .changeCategory(all ? -1 : index);
                           all
                               ? context.read<FoodBlocRemote>().add(GetAll())
                               : context
@@ -196,10 +200,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16),
-                                color: context.watch<CategoryIndexCubit>().state == index
-                                    ? Colors.green
-                                    : Colors.grey),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                color:
+                                    context.watch<CategoryIndexCubit>().state ==
+                                            index
+                                        ? Colors.green
+                                        : Colors.grey),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                             child: Text(category.name)),
                       );
                     },
@@ -218,159 +225,193 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-            // Promotions(),
-            const Gap(TSizes.md),
-            BlocBuilder<PromotionBloc, PromotionState>(
-              builder: (context, state) {
-                if (state is PromotionLoading) {
-                  return Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
-                    child: Container(),
-                  );
-                } else if (state is PromotionLoaded) {
-                  return CarouselSlider(
-                      options: CarouselOptions(height: 150, autoPlay: true),
-                      items: state.promotions.map((promotion) {
-                        return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                            child: CachedNetworkImage(
-                              imageUrl: promotion.imageUrl,
-                            ));
-                      }).toList());
-                } else if (state is PromotionError) {
-                  return Center(child: Text(state.error));
-                }
-                return Center(child: Text(state.toString()));
-              },
-            ),
-            const Gap(TSizes.md),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 10.0,
-              ),
-              child: Text(LocaleKeys.foods.tr(),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  )),
+            Promotions(),
+            // const Gap(TSizes.md),
+            // BlocBuilder<PromotionBloc, PromotionState>(
+            //   builder: (context, state) {
+            //     if (state is PromotionLoading) {
+            //       return Shimmer.fromColors(
+            //         baseColor: Colors.grey[300]!,
+            //         highlightColor: Colors.grey[100]!,
+            //         child: Container(),
+            //       );
+            //     } else if (state is PromotionLoaded) {
+            //       return CarouselSlider(
+            //           options: CarouselOptions(height: 150, autoPlay: true),
+            //           items: state.promotions.map((promotion) {
+            //             return Container(
+            //                 margin: const EdgeInsets.symmetric(horizontal: 10),
+            //                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+            //                 child: CachedNetworkImage(
+            //                   imageUrl: promotion.imageUrl,
+            //                 ));
+            //           }).toList());
+            //     } else if (state is PromotionError) {
+            //       return Center(child: Text(state.error));
+            //     }
+            //     return Center(child: Text(state.toString()));
+            //   },
+            // ),
+            // const Gap(TSizes.md),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10.0,
+                  ),
+                  child: Text(LocaleKeys.foods.tr(),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      )),
+                ),
+                Divider()
+              ],
             ),
             BlocBuilder<FoodBlocRemote, FoodStateRemote>(
               builder: (context, state) {
                 if (state is FetchFoodSuccess) {
-                  return GridView.builder(
+                  return ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 200,
-                      childAspectRatio: 0.63,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                    ),
                     itemCount: state.food.length,
                     itemBuilder: (context, index) {
                       final item = state.food[index];
-                      return Container(
-                        margin: const EdgeInsets.only(top: 10.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          gradient: const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.grey,
-                              Colors.white,
-                              Colors.black,
-                              Colors.black,
-                              Colors.black
-                            ],
+                      return Card(
+                          margin: const EdgeInsets.only(
+                            top: 10.0,
                           ),
-                        ),
-                        child: Center(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              ZoomTapAnimation(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => ProductDetailScreen(item: item),
-                                    ),
-                                  );
-                                },
-                                child: Hero(
-                                  tag: 'product_${item.name}',
-                                  child: Image.asset(
-                                    item.imageUrl,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Image.asset(AppImages.burger);
-                                    },
+                          elevation: 10.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10.0,
+                              horizontal: 10.0,
+                            ),
+                            decoration: BoxDecoration(
+                              // border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0,
+                                    horizontal: 10.0,
                                   ),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.name,
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Sora',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    item.description,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  child: Row(
                                     children: [
                                       Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(16),
-                                          color: Colors.white.withOpacity(0.2),
-                                        ),
-                                        child: Text(
-                                          '${item.price.toStringAsFixed(2)} ${LocaleKeys.usd.tr()}',
-                                          style: const TextStyle(color: Colors.white),
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              7,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              3.5,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(16.0),
+                                            image: DecorationImage(
+                                              fit: BoxFit.fill,
+                                              image:
+                                                  AssetImage(AppImages.pizza),
+                                            ),
+                                          )),
+                                      SizedBox(width: 5.0),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.name,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 15,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              maxLines: 10,
+                                            ),
+                                            Text(
+                                              'Tanlang savatga qo\'shing va sotib oling!',
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              maxLines: 2,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  '${item.price.toStringAsFixed(2)} ${LocaleKeys.usd.tr()}',
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
+                                                      fontFamily: 'Sora'),
+                                                ),
+                                                ZoomTapAnimation(
+                                                  onTap: () {
+                                                    context
+                                                        .read<FoodBloc>()
+                                                        .add(
+                                                            AddFoodEvent(item));
+                                                    Fluttertoast.showToast(
+                                                      msg: LocaleKeys
+                                                          .successfully_added_to_cart
+                                                          .tr(),
+                                                      toastLength:
+                                                          Toast.LENGTH_SHORT,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      textColor: Colors.black,
+                                                      fontSize: 16.0,
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            bottom: 8.0),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.red,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.shopping_cart,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      ZoomTapAnimation(
-                                        onTap: () {
-                                          context.read<FoodBloc>().add(AddFoodEvent(item));
-                                          Fluttertoast.showToast(
-                                            msg: LocaleKeys.successfully_added_to_cart.tr(),
-                                            toastLength: Toast.LENGTH_SHORT,
-                                            gravity: ToastGravity.BOTTOM,
-                                            backgroundColor: Colors.white,
-                                            textColor: Colors.black,
-                                            fontSize: 16.0,
-                                          );
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(12),
-                                            color: Colors.red,
-                                          ),
-                                          child: const Icon(Icons.add),
-                                        ),
-                                      )
                                     ],
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
+                                ),
+                              ],
+                            ),
+                          ));
                     },
                   );
                 } else if (state is FetchFoodLoading) {
@@ -381,9 +422,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Center(child: Text('Unknown state: $state'));
               },
             ),
+            SizedBox(
+              height: 100.0,
+            )
           ],
         ),
       ),
     );
   }
 }
+
+// Hero(
+// tag: 'product_${item.name}',
+// child: Image.asset(
+// item.imageUrl,
+// errorBuilder: (context, error, stackTrace) {
+// return Image.asset(
+// AppImages.burger,
+// );
+// },
+// ),
+// ),

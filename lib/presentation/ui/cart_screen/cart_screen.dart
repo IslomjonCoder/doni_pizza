@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/data/database/food_database.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
@@ -88,13 +89,28 @@ class _CartScreenState extends State<CartScreen> {
         title: Text(LocaleKeys.cart.tr(),
             style: AppStyles.appBarTitle.copyWith(fontSize: AppSizes.appBarTitleSize)),
         actions: [
-          TextButton(
-            onPressed: () {},
-            child: ZoomTapAnimation(
-              onTap: () => foodBloc.add(DeleteFoods()),
-              child: Text(
-                LocaleKeys.clear.tr(),
-                style: AppStyles.clearButton.copyWith(fontSize: AppSizes.clearButtonSize),
+          ZoomTapAnimation(
+            onTap: () {
+              AwesomeDialog(context: context,
+                  dialogType: DialogType.WARNING,
+                  animType: AnimType.BOTTOMSLIDE,
+                  title: LocaleKeys.clearCart.tr(),
+                  btnOkOnPress:
+                        () => foodBloc.add(DeleteFoods()),
+                  btnOkIcon: Icons.delete,
+                  btnOkColor: Colors.red,
+                btnOkText: LocaleKeys.yes.tr(),
+                  )..show();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0
+              ),
+              child: Center(
+                child: Text(
+                  LocaleKeys.clear.tr(),
+                  style: AppStyles.clearButton.copyWith(fontSize: AppSizes.clearButtonSize),
+                ),
               ),
             ),
           ),
@@ -203,6 +219,7 @@ class _CartScreenState extends State<CartScreen> {
                             );
                           },
                           child: Container(
+                            margin: EdgeInsets.all(16.0),
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
@@ -210,10 +227,10 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: AppSizes.verticalPadding * 3), // Adjusted size
+                                  vertical: AppSizes.verticalPadding * 3),
                               child: Center(
                                 child: Text(
-                                  "${LocaleKeys.orderNow.tr()}  /${state.totalValue}${LocaleKeys.usd.tr()}",
+                                  "${LocaleKeys.orderNow.tr()} / ${state.totalValue}${LocaleKeys.usd.tr()}",
                                   style: AppStyles.orderButton, // Adjusted size
                                 ),
                               ),
