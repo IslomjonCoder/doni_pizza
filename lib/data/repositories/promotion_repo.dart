@@ -19,6 +19,14 @@ class PromotionRepository {
     }
   }
 
+  Stream<List<Promotion>> getPromotionsStream() {
+    return _firestore.collection(_collectionName).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Promotion.fromJson(doc.data());
+      }).toList();
+    });
+  }
+
   // Retrieve a list of all promotions from Firestore.
   Future<List<Promotion>> getAllPromotions() async {
     try {
