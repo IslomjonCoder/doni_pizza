@@ -56,6 +56,7 @@ abstract class LocaleKeys {
   static const orderDetail = 'order_detail';
   static const recipient = 'recipient';
   static const me = 'me';
+  static const errror = 'errror';
   static const another = 'else';
   static const recipientPhoneNumber = 'recipient_phone_number';
   static const mandatory = 'mandatory';
@@ -70,4 +71,8 @@ abstract class LocaleKeys {
   static const sure_to_clear_cart = 'sure_to_clear_cart';
   static const current_orders = 'current_orders';
   static const all_orders = 'all_orders';
+  static const ok = "ok";
+  static const error = "error";
+  static const cancel = "cancel";
+  static const orderCreated = "order_created";
 }

@@ -2,6 +2,7 @@ import 'package:doni_pizza/business_logic/auth_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/order_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/food_bloc/food_bloc.dart';
+import 'package:doni_pizza/business_logic/blocs/order_bloc/order_remote_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/promotion_bloc/promotion_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/category_cubit/category_cubit.dart';
@@ -11,6 +12,7 @@ import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
 import 'package:doni_pizza/data/models/category_model.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
+import 'package:doni_pizza/data/models/user_model.dart';
 import 'package:doni_pizza/data/repositories/auth_repo.dart';
 import 'package:doni_pizza/data/repositories/category_repo.dart';
 import 'package:doni_pizza/data/repositories/food_repo.dart';
@@ -37,6 +39,7 @@ Future<void> main() async {
   Hive.registerAdapter(OrderItemAdapter()); // Register the generated type adapter
   Hive.registerAdapter(FoodItemAdapter());
   Hive.registerAdapter(CategoryModelAdapter());
+  Hive.registerAdapter(UserModelAdapter());
 
   await Hive.openBox<OrderItem>('orderItems');
   runApp(EasyLocalization(
@@ -61,6 +64,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<AuthCubit>(create: (context) => AuthCubit()),
         BlocProvider<OrderBloc>(create: (context) => OrderBloc()),
+        BlocProvider<OrderRemoteBloc>(create: (context) => OrderRemoteBloc()),
         BlocProvider<FoodBloc>(create: (context) => FoodBloc()..add(LoadTodosEvent())),
         BlocProvider<TabCubit>(create: (context) => TabCubit()),
         BlocProvider<PromotionBloc>(

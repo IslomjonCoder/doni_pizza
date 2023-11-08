@@ -11,6 +11,7 @@ class AuthState extends Equatable {
   final Status signInWithGoogleStatus;
   final Status signInWithEmailAndPasswordStatus;
   final Status registerWithEmailAndPasswordStatus;
+  final Status userDataUpdateStatus;
 
   const AuthState({
     this.user,
@@ -19,6 +20,7 @@ class AuthState extends Equatable {
     this.signInWithGoogleStatus = Status.initial,
     this.signInWithEmailAndPasswordStatus = Status.initial,
     this.registerWithEmailAndPasswordStatus = Status.initial,
+    this.userDataUpdateStatus = Status.initial,
   });
 
   AuthState copyWith({
@@ -28,6 +30,7 @@ class AuthState extends Equatable {
     Status? signInWithGoogleStatus,
     Status? signInWithEmailAndPasswordStatus,
     Status? registerWithEmailAndPasswordStatus,
+    Status? userDataUpdateStatus,
   }) {
     return AuthState(
       user: user ?? this.user,
@@ -38,6 +41,7 @@ class AuthState extends Equatable {
           signInWithEmailAndPasswordStatus ?? this.signInWithEmailAndPasswordStatus,
       registerWithEmailAndPasswordStatus:
           registerWithEmailAndPasswordStatus ?? this.registerWithEmailAndPasswordStatus,
+      userDataUpdateStatus: userDataUpdateStatus ?? this.userDataUpdateStatus,
     );
   }
 
@@ -48,6 +52,7 @@ class AuthState extends Equatable {
         userModel,
         signInWithGoogleStatus,
         signInWithEmailAndPasswordStatus,
-        registerWithEmailAndPasswordStatus
+        registerWithEmailAndPasswordStatus,
+        userDataUpdateStatus,
       ];
 }

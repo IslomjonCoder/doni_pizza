@@ -1,5 +1,7 @@
 import 'package:doni_pizza/business_logic/auth_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
+import 'package:doni_pizza/data/database/user_service_hive.dart';
+import 'package:doni_pizza/data/models/user_model.dart';
 import 'package:doni_pizza/data/repositories/user_repo.dart';
 import 'package:doni_pizza/presentation/home_screen.dart';
 import 'package:doni_pizza/presentation/ui/auth_screen/welcome_screen.dart';
@@ -15,21 +17,19 @@ class RouterApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
       builder: (context, state) {
-        if (state == AuthState.unauthenticated) {
+        if (state.status == AuthStateEnum.unauthenticated) {
           return const WelcomeScreen();
         } else {
           return const TabBox();
         }
       },
       listener: (BuildContext context, AuthState state) async {
-        TLoggerHelper.info('state is $state');
-        if (state == AuthState.authenticated) {
-          final userModel = await UserRepository().getUserInfo();
-          print('ok');
-          if (!context.mounted) return;
-          print('ok');
-          context.read<AuthBloc>().state.copyWith(userModel: userModel);
-          TLoggerHelper.info(context.read<AuthBloc>().state.toString());
+        print('state status: ${state.status}');
+        if (state.status == AuthStateEnum.authenticated) {
+          // Fetch the UserModel from Hive or Firestore and update the AuthCubit
+          final userModel = await updateUserModelFromHiveOrFirestore(context);
+
+          // if (!context.mounted) return;
         }
         Navigator.pushAndRemoveUntil(
           context,
@@ -40,5 +40,22 @@ class RouterApp extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<UserModel?> updateUserModelFromHiveOrFirestore(BuildContext context) async {
+    // Check if UserModel exists in Hive
+    final userModel = await HiveService.getUserModelFromHive();
+
+    if (userModel != null) {
+      return userModel; // Return UserModel from Hive if it exists
+    } else {
+      // If UserModel doesn't exist in Hive, fetch it from Firestore
+      final userModelFromFirestore = await UserRepository().getUserInfo();
+
+      // Store the UserModel in Hive
+      await HiveService.saveUserModelToHive(userModelFromFirestore!);
+
+      return userModelFromFirestore;
+    }
   }
 }

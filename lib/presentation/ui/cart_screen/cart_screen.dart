@@ -67,7 +67,7 @@ class AppSizes {
 }
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({Key? key});
+  const CartScreen({super.key});
 
   @override
   State<CartScreen> createState() => _CartScreenState();

@@ -1,10 +1,41 @@
+import 'package:doni_pizza/data/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-enum AuthState { unauthenticated, authenticated }
+enum AuthStateEnum { unauthenticated, authenticated }
+
+class AuthState {
+  AuthStateEnum status;
+
+  UserModel? userModel;
+  User? user;
+
+  AuthState({
+    required this.status,
+    this.userModel,
+    this.user,
+  });
+
+  @override
+  String toString() {
+    return 'AuthState{status: $status, userModel: $userModel, user: $user}';
+  }
+
+  AuthState copyWith({
+    AuthStateEnum? status,
+    UserModel? userModel,
+    User? user,
+  }) {
+    return AuthState(
+      status: status ?? this.status,
+      userModel: userModel ?? this.userModel,
+      user: user ?? this.user,
+    );
+  }
+}
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthState.unauthenticated) {
+  AuthCubit() : super(AuthState(status: AuthStateEnum.unauthenticated)) {
     checkAuthState();
   }
 
@@ -14,11 +45,15 @@ class AuthCubit extends Cubit<AuthState> {
     _firebaseAuth.authStateChanges().listen((User? user) {
       print('State changed: $user : Cubit');
       if (user == null) {
-        emit(AuthState.unauthenticated);
+        emit(state.copyWith(status: AuthStateEnum.unauthenticated, user: user, userModel: null));
       } else {
-        emit(AuthState.authenticated);
+        emit(state.copyWith(status: AuthStateEnum.authenticated, user: user));
       }
     });
+  }
+
+  updateUserModel(UserModel? model) {
+    emit(state.copyWith(userModel: model));
   }
 
   // Function to handle logout

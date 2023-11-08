@@ -80,4 +80,9 @@ class OrderModel {
       address: address ?? this.address,
     );
   }
+
+  @override
+  String toString() {
+    return 'OrderModel{id: $id, userId: $userId, items: $items, totalPrice: $totalPrice, status: $status, timestamp: $timestamp, phone: $phone, paymentMethod: $paymentMethod, address: $address}';
+  }
 }
