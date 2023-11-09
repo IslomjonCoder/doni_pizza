@@ -1,16 +1,7 @@
 class AppImages {
   //png
   static const String pizza = "assets/images/pizza.png";
-  static const String all = 'assets/images/all.png';
-  static const String chicken = 'assets/images/chicken.png';
-  static const String dessert = 'assets/images/dessert.png';
-  static const String doni = 'assets/images/doni.png';
   static const String splashImage = 'assets/images/splash.JPG';
-  static const String login = 'assets/images/svg.png';
-  static const String burger = 'assets/images/burger.png';
-  static const String juftlik = 'assets/images/juftlik.png';
-  static const String dostlar = 'assets/images/dostlar.png';
-  static const String dostavka = 'assets/images/dostavka.png';
   static const String promotionImage = 'assets/images/promotionImage.png';
 
   //svg
@@ -23,7 +14,4 @@ class AppImages {
   static const String orderEmpty = 'assets/svg/order_empty.svg';
   static const String dev = 'assets/svg/dev.svg';
 
-  //lottie
-  static const String empty = 'assets/images/empty.json';
-  static const String splash = "assets/images/splash.json";
 }

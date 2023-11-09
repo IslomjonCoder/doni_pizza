@@ -20,12 +20,8 @@ class PromotionBloc extends Bloc<PromotionEvent, PromotionState> {
     init();
   }
   init() {
-    promotionRepository.getPromotionStream().listen((event) {
-      print(event);
-    });
+    promotionRepository.getPromotionStream().listen((event) {});
   }
-
-
 
   _addPromotion(AddPromotion event, Emitter<PromotionState> emit) async {
     emit(PromotionLoading());

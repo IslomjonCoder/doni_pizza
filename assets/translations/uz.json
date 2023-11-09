@@ -67,6 +67,6 @@
   "cancel": "Bekor qilish",
   "sure_to_clear_cart": "Savatni tozalashni tasdiqlaysizmi?",
   "current_orders": "Hozirgi",
-  "all_orders": "Barchasi"
-
+  "all_orders": "Barchasi",
+  "you_cant_order" : "Hozirda siz buyurtma qila olmaysiz"
 }

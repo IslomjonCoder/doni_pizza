@@ -1,3 +1,4 @@
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:doni_pizza/business_logic/blocs/order_bloc/order_remote_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
 import 'package:doni_pizza/utils/constants/enums.dart';
@@ -83,7 +84,7 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
                 return const Center(child: CircularProgressIndicator(color: Colors.black));
               } else if (state is OrdersFetchedState) {
                 final successOrders = state.orders
-                    .where((element) => element.status == OrderStatus.delivered && element.userId == context.read<AuthCubit>().state.user?.uid)
+                    .where((element) => element.status == OrderStatus.delivered && element.userId == context.read<AuthCubit>().state.user?.uid|| element.status == OrderStatus.canceled)
                     .toList();
                 return successOrders.isEmpty
                     ? Center(child: Text(LocaleKeys.noOrder.tr()))
@@ -107,12 +108,32 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            trailing: Text(
-                              '${order.totalPrice} ${LocaleKeys.usd.tr()}',
-                              style: const TextStyle(
-                                color: Colors.indigo,
-                                fontFamily: 'Sora',
-                              ),
+                            trailing: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${order.totalPrice} ${LocaleKeys.usd.tr()}',
+                                  style: const TextStyle(
+                                    color: Colors.indigo,
+                                    fontFamily: 'Sora',
+                                  ),
+                                ), Card(
+                                  color: order.status == OrderStatus.delivered
+                                      ? Colors.green
+                                      : Colors.red,
+
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Text(
+                                      order.status.name.capitalizeFirst(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                             subtitle: Row(
                               children: [

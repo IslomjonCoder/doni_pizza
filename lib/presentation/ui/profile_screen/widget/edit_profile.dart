@@ -1,6 +1,5 @@
-import 'package:doni_pizza/business_logic/auth_bloc.dart';
-import 'package:doni_pizza/business_logic/auth_event.dart';
-import 'package:doni_pizza/business_logic/auth_state.dart';
+import 'package:doni_pizza/business_logic/blocs/auth_bloc/auth_bloc.dart';
+import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
 import 'package:doni_pizza/presentation/ui/orders/order_detail.dart';
 import 'package:doni_pizza/presentation/ui/tab_box/tab_box.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -30,17 +29,30 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.read<AuthCubit>().state.userModel;
+    nameController.text = user?.name ?? '';
+    phoneController.text = user?.phoneNumber ?? '';
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        toolbarHeight: 0,
+        // toolbarHeight: 0,
+        title: Text(
+          LocaleKeys.editProfile.tr(),
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         automaticallyImplyLeading: false,
       ),
-      body: BlocListener<AuthBloc, AuthState>(
+      body: BlocListener<AuthBloc, AuthUserState>(
         listener: (context, state) {
           if (state.userDataUpdateStatus == Status.success) {
+            final user = context.read<AuthCubit>().state.userModel;
+            context.read<AuthCubit>().updateUserModel(user?.copyWith(
+                name: nameController.text.trim(), phoneNumber: phoneController.text.trim()));
             Navigator.pop(context);
             Navigator.pushAndRemoveUntil(
                 context,
@@ -77,13 +89,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  LocaleKeys.editProfile.tr(),
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
                 const SizedBox(height: 20),
                 GlobalTextField(
                   controller: nameController,
@@ -108,8 +113,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       )),
                   onPressed: () {
-                    String name = nameController.text;
-                    String phone = phoneController.text;
+                    String name = nameController.text.isEmpty
+                        ? context.read<AuthCubit>().state.userModel!.name
+                        : nameController.text;
+                    String phone = phoneController.text.isEmpty
+                        ? context.read<AuthCubit>().state.userModel!.phoneNumber
+                        : phoneController.text;
                     context
                         .read<AuthBloc>()
                         .add(UpdateUserDataEvent(name: name, phoneNumber: phone));
