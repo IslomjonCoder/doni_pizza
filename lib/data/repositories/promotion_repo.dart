@@ -10,8 +10,6 @@ class PromotionRepository {
     try {
       await _firestore.collection(_collectionName).doc(promotion.id).set({
         'id': promotion.id,
-        'title': promotion.title,
-        'description': promotion.description,
         'imageUrl': promotion.imageUrl,
       });
     } catch (e) {
@@ -19,10 +17,12 @@ class PromotionRepository {
     }
   }
 
-  Stream<List<Promotion>> getPromotionsStream() {
-    return _firestore.collection(_collectionName).snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return Promotion.fromJson(doc.data());
+  Stream<List<Promotion>> getPromotionStream() {
+    return _firestore.collection(_collectionName).snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        return Promotion.fromJson(data);
+
       }).toList();
     });
   }
@@ -37,8 +37,6 @@ class PromotionRepository {
           final data = doc.data();
           return Promotion(
             id: data['id'],
-            title: data['title'],
-            description: data['description'],
             imageUrl: data['imageUrl'],
           );
         }).toList();
@@ -57,8 +55,6 @@ class PromotionRepository {
           await _firestore.collection(_collectionName).where('id', isEqualTo: promotion.id).get();
       if (queries.docs.isNotEmpty) {
         await queries.docs.first.reference.update({
-          'title': promotion.title,
-          'description': promotion.description,
           'imageUrl': promotion.imageUrl,
         });
       }

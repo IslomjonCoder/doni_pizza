@@ -51,11 +51,16 @@ class AuthCubit extends Cubit<AuthState> {
       }
     });
   }
-
+updateImageUrl(String url) {
+    emit(state.copyWith(userModel: state.userModel?.copyWith(imageUrl: url)));
+}
   updateUserModel(UserModel? model) {
     emit(state.copyWith(userModel: model));
   }
+clearAll(){
+  emit(state.copyWith(userModel: null, user: null, status: AuthStateEnum.unauthenticated));
 
+}
   // Function to handle logout
   Future<void> logout() async {
     await _firebaseAuth.signOut();

@@ -14,33 +14,41 @@ part 'food_state.dart';
 class FoodBlocRemote extends Bloc<FoodEvent, FoodStateRemote> {
   final FoodItemRepository foodRepository;
   final CacheManager cacheManager = CacheManager(); // Instantiate the CacheManager
-
+  List<FoodItem> foods = [];
   FoodBlocRemote(this.foodRepository) : super(FoodInitial()) {
     on<GetAll>(_fetchFoodItems);
     on<GetFoodsByCategory>(_fetchFoodItemsByCategory);
-    on<SearchFoodItem>(
-      _searchFoodItems,
-      transformer: restartable(),
-    );
-    on<CreateFoodItem>(_createFoodItem);
-    on<UpdateFoodItem>(_updateFoodItem);
-    on<DeleteFoodItem>(_deleteFoodItem);
+    on<SearchFoodItem>(_searchFoodItems, transformer: restartable());
+    on<UpdateFoodItems>(_updateFoodItems);
+    init();
+  }
+
+  init() {
+    foodRepository.getFoodsStream().listen((event) {
+      foods= event;
+      add(UpdateFoodItems(event));
+    });
+  }
+
+  void _updateFoodItems(UpdateFoodItems event, Emitter<FoodStateRemote> emit) {
+    emit(FetchFoodSuccess(event.foods));
   }
 
   _fetchFoodItems(GetAll event, Emitter<FoodStateRemote> emit) async {
     emit(FetchFoodLoading());
     try {
-      final cachedData = cacheManager.get('all_foods'); // Check cache for data
-      if (cachedData != null) {
-        // If data is found in the cache, emit it
-        emit(FetchFoodSuccess(cachedData));
-      }
-
-      final foods = await foodRepository.getAllFoodItems();
       emit(FetchFoodSuccess(foods));
+      // final cachedData = cacheManager.get('all_foods'); // Check cache for data
+      // if (cachedData != null) {
+        // If data is found in the cache, emit it
+        // emit(FetchFoodSuccess(cachedData));
+      // }
+
+      // final foods = await foodRepository.getAllFoodItems();
+      // emit(FetchFoodSuccess(foods));
 
       // Cache the data
-      cacheManager.add('all_foods', foods);
+      // cacheManager.add('all_foods', foods);
     } catch (e) {
       emit(FetchFoodFailure('Failed to fetch food items: $e'));
     }
@@ -49,14 +57,20 @@ class FoodBlocRemote extends Bloc<FoodEvent, FoodStateRemote> {
   _fetchFoodItemsByCategory(GetFoodsByCategory event, Emitter<FoodStateRemote> emit) async {
     emit(FetchFoodLoading());
     try {
-      final cachedData = cacheManager.get('category_${event.categoryId}'); // Check cache for data
-      if (cachedData != null) {
+      print(event.categoryId);
+      final categoryFoods = foods.where((element) {
+        print(element.category.id);
+        return element.category.id == event.categoryId;
+      }).toList();
+      emit(FetchFoodSuccess(categoryFoods));
+      // final cachedData = cacheManager.get('category_${event.categoryId}'); // Check cache for data
+      // if (cachedData != null) {
         // If data is found in the cache, emit it
-        emit(FetchFoodSuccess(cachedData));
-      }
+        // emit(FetchFoodSuccess(cachedData));
+      // }
 
-      final foods = await foodRepository.getFoodItemsInCategory(event.categoryId);
-      emit(FetchFoodSuccess(foods));
+      // final foods = await foodRepository.getFoodItemsInCategory(event.categoryId);
+      // emit(FetchFoodSuccess(foods));
 
       // Cache the data
       cacheManager.add('category_${event.categoryId}', foods);
@@ -66,19 +80,22 @@ class FoodBlocRemote extends Bloc<FoodEvent, FoodStateRemote> {
   }
 
   _searchFoodItems(SearchFoodItem event, Emitter<FoodStateRemote> emit) async {
-    emit(FetchFoodLoading());
-    try {
-      final cachedData = cacheManager.get('search_${event.query}'); // Check cache for data
-      if (cachedData != null) {
-        // If data is found in the cache, emit it
-        emit(FetchFoodSuccess(cachedData));
-      }
+    print("searching for ${event.query}");
+    // emit(FetchFoodLoading());
 
-      final foods = await foodRepository.searchFoodItems(event.query);
-      emit(FetchFoodSuccess(foods));
+    try {
+      emit(FetchFoodSuccess(foods.where((element) => element.name.toLowerCase().contains(event.query.toLowerCase())).toList()));
+      // final cachedData = cacheManager.get('search_${event.query}'); // Check cache for data
+      // if (cachedData != null) {
+        // If data is found in the cache, emit it
+        // emit(FetchFoodSuccess(cachedData));
+      // }
+
+      // final foods = await foodRepository.searchFoodItems(event.query);
+      // emit(FetchFoodSuccess(foods));
 
       // Cache the data
-      cacheManager.add('search_${event.query}', foods);
+      // cacheManager.add('search_${event.query}', foods);
     } catch (e) {
       emit(FetchFoodFailure('Failed to fetch food items: $e'));
     }

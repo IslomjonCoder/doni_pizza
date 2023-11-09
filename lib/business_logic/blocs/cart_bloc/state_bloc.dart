@@ -1,5 +1,6 @@
+
+import 'package:doni_pizza/data/database/cart_database_hive.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
 
@@ -21,7 +22,9 @@ class UpdateFoodEvent extends FoodEvent {
 }
 
 class DeleteFoods extends FoodEvent {
-  DeleteFoods();
+  final OrderItem food;
+
+  DeleteFoods(this.food);
 }
 
 class DeleteFood extends FoodEvent {
@@ -76,94 +79,98 @@ class FoodErrorState extends FoodState {
 }
 
 class FoodBloc extends Bloc<FoodEvent, FoodState> {
-  final Box<OrderItem> foodBox = Hive.box<OrderItem>('orderItems');
+  final CartHiveDatabase hiveDatabase = CartHiveDatabase();
 
   @override
   FoodBloc() : super(TodoInitialState()) {
     on<LoadTodosEvent>(_handleLoadTodosEvent);
     on<AddFoodEvent>(_handleAddFoodEvent);
     on<DeleteFoods>(_handleDeleteFoods);
-    on<DeleteFood>(_handleDeleteFoodEvent);
+    on<DeleteFood>(_handleDeleteFood);
     on<IncrementCountEvent>(_handleIncrementCountEvent);
     on<DecrementCountEvent>(_handleDecrementCountEvent);
     on<ClearCartEvent>(_handleClearCartEvent);
   }
 
-  void _handleLoadTodosEvent(LoadTodosEvent event, Emitter<FoodState> emit) {
-    emit(FoodLoadedState(foodBox.values.toList()));
-  }
-
-  void _handleAddFoodEvent(AddFoodEvent event, Emitter<FoodState> emit) {
+  void _handleLoadTodosEvent(LoadTodosEvent event, Emitter<FoodState> emit) async {
     try {
-      foodBox.add(OrderItem(food: event.food, quantity: 1));
-      emit(FoodLoadedState(foodBox.values.toList()));
+      // Retrieve food items from Hive and emit the success state
+      final orderItems = await hiveDatabase.getAllOrderItems();
+      emit(FoodLoadedState(orderItems));
     } catch (e) {
-      emit(FoodErrorState('Failed to add food: $e'));
+      print(e);
+      emit(FoodErrorState('Failed to load food items'));
     }
   }
 
-  void _handleClearCartEvent(ClearCartEvent event, Emitter<FoodState> emit) {
-    foodBox.clear();
-    print(foodBox.values.toList());
-    emit(FoodLoadedState([]));
-  }
-
-  void _handleIncrementCountEvent(IncrementCountEvent event, Emitter<FoodState> emit) {
+  Future<void> _handleAddFoodEvent(AddFoodEvent event, Emitter<FoodState> emit) async {
     try {
-      final int index = foodBox.values
-          .toList()
-          .indexWhere((orderItem) => orderItem.food.id == event.food.food.id);
-
-      if (index >= 0) {
-        final OrderItem updatedFood =
-            foodBox.getAt(index)!.copyWith(quantity: event.food.quantity + 1);
-        foodBox.putAt(index, updatedFood);
-        emit(FoodLoadedState(foodBox.values.toList()));
-      }
+      // Add the food item to Hive
+      await hiveDatabase.addOrderItem(event.food);
+      final orderItems = await hiveDatabase.getAllOrderItems();
+      emit(FoodLoadedState(orderItems));
     } catch (e) {
-      emit(FoodErrorState('Failed to increment item count: $e'));
+      emit(FoodErrorState('Failed to add food item'));
     }
   }
 
-  void _handleDecrementCountEvent(DecrementCountEvent event, Emitter<FoodState> emit) {
+  Future<void> _handleDeleteFoods(DeleteFoods event, Emitter<FoodState> emit) async {
     try {
-      final int index = foodBox.values
-          .toList()
-          .indexWhere((orderItem) => orderItem.food.id == event.food.food.id);
-
-      if (index >= 0 && event.food.quantity > 1) {
-        final OrderItem updatedFood =
-            foodBox.getAt(index)!.copyWith(quantity: event.food.quantity - 1);
-        foodBox.putAt(index, updatedFood);
-        emit(FoodLoadedState(foodBox.values.toList()));
-      }
+      // Clear the cart in Hive (delete all food items)
+      await hiveDatabase.clearAllFoodIctems();
+      final orderItems = await hiveDatabase.getAllOrderItems();
+      emit(FoodLoadedState(orderItems));
     } catch (e) {
-      emit(FoodErrorState('Failed to decrement item count: $e'));
+      emit(FoodErrorState('Failed to clear cart'));
     }
   }
 
-  void _handleDeleteFoods(DeleteFoods event, Emitter<FoodState> emit) {
+  Future<void> _handleIncrementCountEvent(
+      IncrementCountEvent event, Emitter<FoodState> emit) async {
     try {
-      foodBox.clear();
-      print('ok');
-      emit(FoodLoadedState(foodBox.values.toList()));
+      // Handle increment logic and update the count in CartHiveDatabase
+      // Example: await hiveDatabase.incrementFoodItemCount(event.food.key);
+      await hiveDatabase.increaseOrderItemQuantity(event.food);
+      final orderItems = await hiveDatabase.getAllOrderItems();
+      emit(FoodLoadedState(orderItems));
     } catch (e) {
-      emit(FoodErrorState('Failed to delete foods: $e'));
+      print('${e}increment');
+      emit(FoodErrorState('Failed to increment count'));
     }
   }
 
-  void _handleDeleteFoodEvent(DeleteFood event, Emitter<FoodState> emit) {
+  Future<void> _handleDeleteFood(DeleteFood event, Emitter<FoodState> emit) async {
     try {
-      final int index = foodBox.values
-          .toList()
-          .indexWhere((orderItem) => orderItem.food.id == event.food.food.id);
-
-      if (index >= 0) {
-        foodBox.deleteAt(index);
-        emit(FoodLoadedState(foodBox.values.toList()));
-      }
+      await hiveDatabase.deleteOrderItem(event.food);
+      final orderItems = await hiveDatabase.getAllOrderItems();
+      emit(FoodLoadedState(orderItems));
     } catch (e) {
-      emit(FoodErrorState('Failed to delete food: $e'));
+      print('$e delete');
+      emit(FoodErrorState('Failed to delete food item'));
+    }
+  }
+
+  Future<void> _handleDecrementCountEvent(
+      DecrementCountEvent event, Emitter<FoodState> emit) async {
+    try {
+      // Handle decrement logic and update the count in CartHiveDatabase
+      // Example: await hiveDatabase.decrementFoodItemCount(event.food.key);
+      await hiveDatabase.decreaseOrderItemQuantity(event.food);
+      final orderItems = await hiveDatabase.getAllOrderItems();
+      emit(FoodLoadedState(orderItems));
+    } catch (e) {
+      print('${e}decrement');
+      emit(FoodErrorState('Failed to decrement count'));
+    }
+  }
+
+  Future<void> _handleClearCartEvent(ClearCartEvent event, Emitter<FoodState> emit) async {
+    try {
+      // Clear the cart in Hive (delete all food items)
+      await hiveDatabase.clearAllBoxes();
+      emit(FoodLoadedState([]));
+    } catch (e) {
+      emit(FoodErrorState('Failed to clear cart'));
     }
   }
 }

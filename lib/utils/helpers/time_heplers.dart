@@ -15,4 +15,8 @@ class TTimeHelpers {
         '${timestamp.day.toString().padLeft(2, '0')}-${timestamp.month.toString().padLeft(2, '0')}-${timestamp.year} ${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
     return formattedDate;
   }
+  static dateTimeToHourMinute(DateTime timestamp) {
+    final formattedDate = "${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}";
+    return formattedDate;
+  }
 }

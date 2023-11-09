@@ -9,7 +9,6 @@ import 'package:doni_pizza/generated/locale_keys.g.dart';
 
 import 'package:doni_pizza/presentation/widgets/global_textfield.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -111,10 +110,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   onPressed: () {
                     String name = nameController.text;
                     String phone = phoneController.text;
-                    context.read<AuthBloc>().add(UpdateUserDataEvent(
-                          name: name,
-                          phoneNumber: phone,
-                        ));
+                    context
+                        .read<AuthBloc>()
+                        .add(UpdateUserDataEvent(name: name, phoneNumber: phone));
                   },
                   child: const Text('Save'),
                 ),

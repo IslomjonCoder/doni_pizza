@@ -14,14 +14,14 @@ class UserModel {
   @HiveField(3)
   final String? imageUrl;
   @HiveField(4)
-  final String password;
+  final String? email;
 
   UserModel({
     required this.id,
     required this.name,
     required this.phoneNumber,
     this.imageUrl,
-    required this.password,
+    required this.email,
   });
 
   UserModel copyWith({
@@ -29,14 +29,14 @@ class UserModel {
     String? name,
     String? phoneNumber,
     String? imageUrl,
-    String? password,
+    String? email,
   }) {
     return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       imageUrl: imageUrl ?? this.imageUrl,
-      password: password ?? this.password,
+      email: email ?? this.email,
     );
   }
 
@@ -45,7 +45,7 @@ class UserModel {
       'name': name,
       'phoneNumber': phoneNumber,
       'imageUrl': imageUrl,
-      'password': password,
+      'email': email,
     };
   }
 
@@ -56,12 +56,12 @@ class UserModel {
       name: map['name'] as String,
       phoneNumber: map['phoneNumber'] as String,
       imageUrl: map['imageUrl'] as String?,
-      password: map['password'] as String,
+      email: map['email'] as String?,
     );
   }
 
   @override
   String toString() {
-    return 'UserModel{id: $id, name: $name, phoneNumber: $phoneNumber, imageUrl: $imageUrl, password: $password}';
+    return 'UserModel{id: $id, name: $name, phoneNumber: $phoneNumber, imageUrl: $imageUrl, email: $email}';
   }
 }

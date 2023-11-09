@@ -13,6 +13,7 @@ class OrderModel {
   final String phone;
   final PaymentMethod paymentMethod;
   final String? address;
+  final String name;
 
   const OrderModel({
     this.id,
@@ -24,6 +25,7 @@ class OrderModel {
     required this.phone,
     required this.paymentMethod,
     this.address,
+    required this.name,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class OrderModel {
       phone: json['phone'],
       paymentMethod: PaymentMethodExtension.fromString(json['paymentMethod']),
       address: json['address'],
+      name: json['name'],
     );
   }
 
@@ -54,6 +57,7 @@ class OrderModel {
       'phone': phone,
       'paymentMethod': paymentMethod.name,
       'address': address,
+      'name': name,
     };
   }
 
@@ -67,6 +71,7 @@ class OrderModel {
     String? phone,
     PaymentMethod? paymentMethod,
     String? address,
+    String? name,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -78,11 +83,12 @@ class OrderModel {
       phone: phone ?? this.phone,
       paymentMethod: paymentMethod ?? this.paymentMethod,
       address: address ?? this.address,
+      name: name ?? this.name,
     );
   }
 
   @override
   String toString() {
-    return 'OrderModel{id: $id, userId: $userId, items: $items, totalPrice: $totalPrice, status: $status, timestamp: $timestamp, phone: $phone, paymentMethod: $paymentMethod, address: $address}';
+    return 'OrderModel{id: $id, userId: $userId, items: $items, totalPrice: $totalPrice, status: $status, timestamp: $timestamp, phone: $phone, paymentMethod: $paymentMethod, address: $address, name: $name}';
   }
 }

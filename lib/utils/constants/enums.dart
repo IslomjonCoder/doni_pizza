@@ -5,7 +5,7 @@ enum PaymentMethod { cash, card }
 extension PaymentMethodExtension on PaymentMethod {
   static PaymentMethod fromString(String method) {
     for (var value in PaymentMethod.values) {
-      if (value.toString() == method) {
+      if (value.name == method) {
         return value;
       }
     }

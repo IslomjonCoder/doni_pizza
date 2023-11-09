@@ -1,5 +1,14 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doni_pizza/business_logic/cubits/user_data_cubit.dart';
+import 'package:doni_pizza/data/models/user_model.dart';
+import 'package:doni_pizza/main.dart';
+import 'package:doni_pizza/presentation/ui/auth_screen/register_screen.dart';
 import 'package:doni_pizza/utils/logging/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthRepository {
@@ -13,12 +22,69 @@ class AuthRepository {
       if (googleUser == null) {
         return null;
       }
+      print('googleUser: ${googleUser.email}');
+      final userExist = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: googleUser.email)
+          .get();
+      if (userExist.docs.isNotEmpty) {
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        final UserCredential authResult = await _auth.signInWithCredential(credential);
+      }
+      else{
+        Navigator.push(
+          navigatorKey.currentContext!,
+          MaterialPageRoute(builder: (context) => const RegisterScreen()),
+        );
+        AwesomeDialog(
+          context: navigatorKey.currentState!.context!,
+          dialogType: DialogType.info,
+          animType: AnimType.bottomSlide,
+          title: 'Register',
+          desc: 'User not found. Please register.',
+          btnOkOnPress: () {},
+          btnOkText: 'Ok',
+        ).show();
+      }
+
+    } on FirebaseAuthException catch (e) {
+      TLoggerHelper.error(e.message!);
+      throw Exception(e.message);
+    } catch (e) {
+      TLoggerHelper.error('Error signing in with Google: $e');
+      throw Exception('Error signing in with Google: $e');
+      // return null;
+    }
+    return null;
+  }
+
+  Future<User?> registerWithGoogle() async {
+    try {
+      await _googleSignIn.signOut();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        return null;
+      }
+
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
       final UserCredential authResult = await _auth.signInWithCredential(credential);
+      final userExist = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(authResult.user!.uid)
+          .set(UserModel(
+                  id: authResult.user!.uid,
+                  name: navigatorKey.currentContext!.read<UserDataCubit>().state.name,
+                  phoneNumber: navigatorKey.currentContext!.read<UserDataCubit>().state.phoneNumber,
+                  email: googleUser.email)
+              .toJson());
     } on FirebaseAuthException catch (e) {
       TLoggerHelper.error(e.message!);
       throw Exception(e.message);

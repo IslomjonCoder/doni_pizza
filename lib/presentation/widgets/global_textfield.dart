@@ -18,6 +18,7 @@ class GlobalTextField extends StatefulWidget {
   final int? max;
   final int? maxLength;
   final String? helperText;
+  final bool isDark;
 
   const GlobalTextField({
     super.key,
@@ -32,6 +33,7 @@ class GlobalTextField extends StatefulWidget {
     this.max,
     this.maxLength,
     this.helperText,
+    this.isDark = false,
   });
 
   @override
@@ -70,10 +72,10 @@ class _GlobalTextFieldState extends State<GlobalTextField> {
         TextFormField(
           onChanged: widget.onChanged,
           controller: widget.controller,
-          style: const TextStyle(
+          style:  TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.black,
+            color: widget.isDark ? Colors.white : Colors.black,
           ),
           maxLines: widget.max,
           onTapOutside: (event) {
@@ -107,21 +109,23 @@ class _GlobalTextFieldState extends State<GlobalTextField> {
                     },
                   )
                 : null,
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey, width: 0),
-              borderRadius: BorderRadius.circular(10),
+            border: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              borderSide: BorderSide(
+                color:  widget.isDark ? Colors.white : Colors.black,
+              )
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(width: 2),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              borderSide: BorderSide(
+                color:  widget.isDark ? Colors.white : Colors.black,
+              )
             ),
-            errorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.red, width: 0),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            border: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey, width: 0),
-              borderRadius: BorderRadius.circular(10),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              borderSide: BorderSide(
+                color:  widget.isDark ? Colors.grey : Colors.black,
+              )
             ),
             // filled: true,
             // fillColor: Colors.black12,

@@ -7,8 +7,6 @@ class FoodItemRepository {
 
   /// Retrieves a list of all food items from the Firestore collection.
   Future<List<FoodItem>> getAllFoodItems() async {
-    // try {
-
     final querySnapshot = await _firestore.collection(_foodItemsCollection).get();
     if (querySnapshot.docs.isNotEmpty) {
       return querySnapshot.docs.map((doc) {
@@ -17,9 +15,14 @@ class FoodItemRepository {
     } else {
       throw Exception('No food items found.');
     }
-    // } catch (e) {
-    //   throw Exception('Error fetching all food items: $e');
-    // }
+  }
+
+  Stream<List<FoodItem>> getFoodsStream() {
+    return _firestore.collection(_foodItemsCollection).snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return FoodItem.fromJson(doc.data());
+      }).toList();
+    });
   }
 
   /// Retrieves a list of food items in a specific category based on the provided [categoryId].

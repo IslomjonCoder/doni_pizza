@@ -9,6 +9,7 @@ import 'package:doni_pizza/business_logic/cubits/category_cubit/category_cubit.d
 import 'package:doni_pizza/business_logic/cubits/category_index_cubit/category_index_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/food_cubit/food_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
+import 'package:doni_pizza/business_logic/cubits/user_data_cubit.dart';
 import 'package:doni_pizza/data/models/category_model.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
@@ -40,7 +41,7 @@ Future<void> main() async {
   Hive.registerAdapter(FoodItemAdapter());
   Hive.registerAdapter(CategoryModelAdapter());
   Hive.registerAdapter(UserModelAdapter());
-
+  await Hive.openBox<FoodItem>('foodItems');
   await Hive.openBox<OrderItem>('orderItems');
   runApp(EasyLocalization(
       assetLoader: const CodegenLoader(),
@@ -49,7 +50,7 @@ Future<void> main() async {
       fallbackLocale: const Locale('en'),
       child: MyApp()));
 }
-
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
@@ -74,6 +75,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<CategoryIndexCubit>(create: (context) => CategoryIndexCubit()),
         BlocProvider<CategoryCubit>(create: (context) => CategoryCubit(categoryRepository)),
         BlocProvider<FoodCubit>(create: (context) => FoodCubit(foodItemRepository)),
+        BlocProvider<UserDataCubit>(create: (context) => UserDataCubit()),
         BlocProvider<AuthBloc>(create: (context) => AuthBloc(authRepository)),
       ],
       child: MaterialApp(
@@ -81,6 +83,7 @@ class MyApp extends StatelessWidget {
         supportedLocales: context.supportedLocales,
         locale: context.locale,
         theme: ThemeData(
+          indicatorColor: Colors.black,
             appBarTheme: const AppBarTheme(
                 centerTitle: true,
                 titleTextStyle: TextStyle(color: AppColors.c1E293B),
@@ -88,6 +91,7 @@ class MyApp extends StatelessWidget {
                 elevation: 0,
                 iconTheme: IconThemeData(color: AppColors.c475569))),
         debugShowCheckedModeBanner: false,
+        navigatorKey: navigatorKey,
         home: const SplashScreen(),
       ),
     );

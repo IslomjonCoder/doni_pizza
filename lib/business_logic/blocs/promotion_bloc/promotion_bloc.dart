@@ -26,6 +26,8 @@ class PromotionBloc extends Bloc<PromotionEvent, PromotionState> {
     });
   }
 
+
+
   _addPromotion(AddPromotion event, Emitter<PromotionState> emit) async {
     emit(PromotionLoading());
     try {

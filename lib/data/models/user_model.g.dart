@@ -21,7 +21,7 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       name: fields[1] as String,
       phoneNumber: fields[2] as String,
       imageUrl: fields[3] as String?,
-      password: fields[4] as String,
+      email: fields[4] as String?,
     );
   }
 
@@ -36,9 +36,7 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       ..writeByte(2)
       ..write(obj.phoneNumber)
       ..writeByte(3)
-      ..write(obj.imageUrl)
-      ..writeByte(4)
-      ..write(obj.password);
+      ..write(obj.imageUrl);
   }
 
   @override

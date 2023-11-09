@@ -32,3 +32,7 @@ class ChangeOrderStatusEvent extends OrderRemoteEvent {
 
   ChangeOrderStatusEvent(this.orderId, this.newStatus);
 }
+class UpdateOrdersEvent extends OrderRemoteEvent {
+  final List<OrderModel> orders;
+  UpdateOrdersEvent(this.orders);
+}

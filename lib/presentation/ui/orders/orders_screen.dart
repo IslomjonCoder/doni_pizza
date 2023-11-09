@@ -1,16 +1,16 @@
+import 'package:doni_pizza/business_logic/blocs/order_bloc/order_remote_bloc.dart';
+import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
+import 'package:doni_pizza/utils/constants/enums.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../business_logic/blocs/cart_bloc/order_bloc.dart';
 import '../../../generated/locale_keys.g.dart';
-import '../../../utils/icons.dart';
 import 'current_order_screen.dart';
 
 class OrdersScreen extends StatefulWidget {
-  const OrdersScreen() : super();
+  const OrdersScreen({super.key});
 
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();
@@ -73,89 +73,74 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
           ],
         ),
       ),
-      body: BlocBuilder<OrderBloc, OrderState>(
-        builder: (context, state) {
-          if (state is OrderInitialState || state is OrderLoadingState) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is OrderLoadedState) {
-            final orders = state.orders;
-            return orders.isEmpty
-                ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(AppImages.orderEmpty),
-                  const SizedBox(height: 32.0),
-                  Text(
-                    LocaleKeys.noOrder.tr(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: 'Sora',
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            )
-                : TabBarView(
-              controller: _tabController,
-              children: [
-                CurrentOrderScreen(),
-                ListView.separated(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: orders.length,
-                  separatorBuilder: (context, index) {
-                    return const Divider(
-                      height: 1,
-                      color: Colors.black,
-                    );
-                  },
-                  itemBuilder: (context, index) {
-                    final order = orders[index];
-                    final timestamp = DateTime.parse(order.timestamp.toString());
-                    final formattedTimestamp = DateFormat('yyyy-MM-dd HH:mm').format(timestamp);
-                    return ListTile(
-                      title: Text(
-                        order.items.join(', '),
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Sora',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      trailing: Text(
-                        '${order.totalPrice.toStringAsFixed(2)}${LocaleKeys.usd.tr()}',
-                        style: const TextStyle(
-                          color: Colors.indigo,
-                          fontFamily: 'Sora',
-                        ),
-                      ),
-                      subtitle: Row(
-                        children: [
-                          Text(
-                            '${LocaleKeys.ordered_at.tr()}: $formattedTimestamp',
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontFamily: 'Sora',
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          const CurrentOrderScreen(),
+          BlocBuilder<OrderRemoteBloc, OrderRemoteState>(
+            builder: (context, state) {
+              print('order remote state: $state');
+              if (state is OrderLoadingState) {
+                return const Center(child: CircularProgressIndicator(color: Colors.black));
+              } else if (state is OrdersFetchedState) {
+                print(context.read<AuthCubit>().state.user?.uid);
+                final successOrders = state.orders
+                    .where((element) => element.status == OrderStatus.delivered && element.userId == context.read<AuthCubit>().state.user?.uid)
+                    .toList();
+                return successOrders.isEmpty
+                    ? Center(child: Text(LocaleKeys.noOrder.tr()))
+                    : ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: successOrders.length,
+                        separatorBuilder: (context, index) {
+                          return const Divider(height: 1, color: Colors.black);
+                        },
+                        itemBuilder: (context, index) {
+                          final order = successOrders[index];
+                          final timestamp = DateTime.parse(order.timestamp.toString());
+                          final formattedTimestamp =
+                              DateFormat('yyyy-MM-dd HH:mm').format(timestamp);
+                          return ListTile(
+                            title: Text(
+                              order.items.map((e) => e.food.name).join(', '),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontFamily: 'Sora',
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                            trailing: Text(
+                              '${order.totalPrice} ${LocaleKeys.usd.tr()}',
+                              style: const TextStyle(
+                                color: Colors.indigo,
+                                fontFamily: 'Sora',
+                              ),
+                            ),
+                            subtitle: Row(
+                              children: [
+                                Text(
+                                  '${LocaleKeys.ordered_at.tr()}: $formattedTimestamp',
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontFamily: 'Sora',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+              }
+              return Center(
+                child: Text(
+                  "Current state: $state",
+                  textAlign: TextAlign.center,
                 ),
-
-              ],
-            );
-          } else if (state is OrderErrorState) {
-            return Center(child: Text('Error: ${state.errorMessage}'));
-          } else {
-            return const Text('Unknown state');
-          }
-        },
+              );
+            },
+          ),
+        ],
       ),
-
     );
   }
 

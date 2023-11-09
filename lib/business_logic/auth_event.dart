@@ -2,14 +2,14 @@ abstract class AuthEvent {}
 
 class LoginEvent extends AuthEvent {
   final String phoneNumber;
-  final String password;
+  final String name;
 
   LoginEvent({
     required this.phoneNumber,
-    required this.password,
+    required this.name,
   });
 }
-
+class RegisterWithGoogleEvent extends AuthEvent {}
 class UpdateUserDataEvent extends AuthEvent {
   final String name;
   final String phoneNumber;

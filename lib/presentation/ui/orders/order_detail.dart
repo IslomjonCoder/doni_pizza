@@ -1,5 +1,3 @@
-import 'package:doni_pizza/business_logic/auth_bloc.dart';
-import 'package:doni_pizza/business_logic/blocs/cart_bloc/order_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/order_bloc/order_remote_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
@@ -8,7 +6,6 @@ import 'package:doni_pizza/data/database/user_service_hive.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
 import 'package:doni_pizza/data/models/order_model.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
-import 'package:doni_pizza/presentation/ui/profile_screen/widget/edit_profile.dart';
 import 'package:doni_pizza/presentation/ui/tab_box/tab_box.dart';
 import 'package:doni_pizza/presentation/widgets/global_textfield.dart';
 import 'package:doni_pizza/utils/constants/enums.dart';
@@ -25,10 +22,10 @@ class OrderDetailScreen extends StatefulWidget {
   const OrderDetailScreen({super.key, required this.foodItems});
 
   @override
-  _OrderDetailScreenState createState() => _OrderDetailScreenState();
+  OrderDetailScreenState createState() => OrderDetailScreenState();
 }
 
-class _OrderDetailScreenState extends State<OrderDetailScreen> {
+class OrderDetailScreenState extends State<OrderDetailScreen> {
   PaymentMethod _selectedPaymentMethod = PaymentMethod.cash;
   OrderRecipient _selectedRecipient = OrderRecipient.me;
 
@@ -60,8 +57,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               : recipientPhoneController.text.trim(),
           paymentMethod: _selectedPaymentMethod,
           address: addressController.text,
+          name: userModel.name,
         );
-        print(order.toString());
         context.read<OrderRemoteBloc>().add(CreateOrderEvent(order));
       }
 
@@ -84,8 +81,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 : recipientPhoneController.text.trim(),
             paymentMethod: _selectedPaymentMethod,
             address: addressController.text,
+            name: name,
           );
-          print(order.toString());
           context.read<OrderRemoteBloc>().add(CreateOrderEvent(order));
         }
       }
@@ -113,7 +110,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       ),
       body: BlocListener<OrderRemoteBloc, OrderRemoteState>(
         listener: (context, state) {
-          if (state is OrderCreatedState) {
+          if (state is OrderCreatedState|| state is OrdersFetchedState) {
             Fluttertoast.showToast(
               msg: LocaleKeys.orderCreated.tr(),
               toastLength: Toast.LENGTH_SHORT,
@@ -281,7 +278,7 @@ Future<dynamic> loadingDialog(BuildContext context) {
       builder: (context) {
         return const Center(child: CircularProgressIndicator());
       },
-      barrierDismissible: false);
+      barrierDismissible: true);
 }
 
 enum OrderRecipient { me, lovedOne }

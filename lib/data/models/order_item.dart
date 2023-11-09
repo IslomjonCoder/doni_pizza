@@ -41,4 +41,15 @@ class OrderItem extends HiveObject {
       quantity: quantity ?? this.quantity,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OrderItem &&
+          // runtimeType == other.runtimeType &&
+          food == other.food &&
+          quantity == other.quantity;
+
+  @override
+  int get hashCode => food.hashCode ^ quantity.hashCode;
 }

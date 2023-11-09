@@ -13,11 +13,9 @@ class Doni_pizza_banner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 30),
-      padding: EdgeInsets.symmetric(horizontal: 5.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        image: const DecorationImage(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      decoration: const BoxDecoration(
+        image: DecorationImage(
           alignment: Alignment.centerRight,
           fit: BoxFit.fitHeight,
           image: AssetImage(AppImages.promotionImage),
@@ -38,9 +36,9 @@ class Doni_pizza_banner extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(
+          const Text(
             "Doni Pizza",
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.w700,
               fontFamily: 'Sora',
@@ -56,7 +54,7 @@ class Doni_pizza_banner extends StatelessWidget {
                     onTap: () {
                       launch("tel:+998941590509");
                     },
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(
                           Icons.phone,
@@ -71,15 +69,15 @@ class Doni_pizza_banner extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 5.0,),
+              const SizedBox(height: 5.0,),
               Row(
                 children: [
                   ZoomTapAnimation(
                     onTap: () {
-                      final String locationUrl = "https://yandex.com/navi/?ll=70.546895%2C41.045763&mode=routes&rtext=41.293235%2C69.276259~41.076267%2C71.818334&rtt=auto&ruri=~&z=8";
+                      const String locationUrl = "https://yandex.com/navi/?ll=70.546895%2C41.045763&mode=routes&rtext=41.293235%2C69.276259~41.076267%2C71.818334&rtt=auto&ruri=~&z=8";
                       launch(locationUrl);
                     },
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(
                           Icons.location_on_rounded,
@@ -94,8 +92,8 @@ class Doni_pizza_banner extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 5.0,),
-              Row(
+              const SizedBox(height: 5.0,),
+              const Row(
                 children: [
                   Icon(
                     Icons.watch_later,
@@ -105,8 +103,8 @@ class Doni_pizza_banner extends StatelessWidget {
                       style: TextStyle(color: Colors.white, fontFamily: 'Sora')),
                 ],
               ),
-              SizedBox(height: 5.0,),
-              Row(
+              const SizedBox(height: 5.0,),
+              const Row(
                 children: [
                   Icon(
                     Icons.directions_run,

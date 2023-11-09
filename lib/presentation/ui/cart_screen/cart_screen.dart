@@ -1,14 +1,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
-import 'package:doni_pizza/data/database/food_database.dart';
-import 'package:doni_pizza/data/models/food_model.dart';
-import 'package:doni_pizza/data/models/order_item.dart';
 import 'package:doni_pizza/utils/device/device_utility.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:doni_pizza/presentation/ui/orders/order_detail.dart';
 import 'package:doni_pizza/utils/icons.dart';
@@ -91,21 +87,19 @@ class _CartScreenState extends State<CartScreen> {
         actions: [
           ZoomTapAnimation(
             onTap: () {
-              AwesomeDialog(context: context,
-                  dialogType: DialogType.WARNING,
-                  animType: AnimType.BOTTOMSLIDE,
-                  title: LocaleKeys.clearCart.tr(),
-                  btnOkOnPress:
-                        () => foodBloc.add(DeleteFoods()),
-                  btnOkIcon: Icons.delete,
-                  btnOkColor: Colors.red,
+              AwesomeDialog(
+                context: context,
+                dialogType: DialogType.WARNING,
+                animType: AnimType.BOTTOMSLIDE,
+                title: LocaleKeys.clearCart.tr(),
+                btnOkOnPress: () => foodBloc.add(ClearCartEvent()),
+                btnOkIcon: Icons.delete,
+                btnOkColor: Colors.red,
                 btnOkText: LocaleKeys.yes.tr(),
-                  )..show();
+              ).show();
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10.0
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Center(
                 child: Text(
                   LocaleKeys.clear.tr(),
@@ -121,7 +115,7 @@ class _CartScreenState extends State<CartScreen> {
         builder: (context, state) {
           print("state is $state");
           if (state is TodoInitialState || state is FoodLoadingState) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Colors.black));
           } else if (state is FoodErrorState) {
             return Center(child: Text(state.errorMessage, textAlign: TextAlign.center));
           } else if (state is FoodLoadedState) {
@@ -133,12 +127,12 @@ class _CartScreenState extends State<CartScreen> {
                       children: [
                         SvgPicture.asset(AppImages.emptyCart),
                         const SizedBox(height: AppSizes.verticalPadding * 6), // Adjusted size
-                        Text(
-                          LocaleKeys.emptyCart.tr(),
-                          textAlign: TextAlign.center,
-                          style: AppStyles.emptyCartText
-                              .copyWith(fontSize: AppSizes.emptyCartTextSize), // Adjusted size
-                        ),
+                        Text(LocaleKeys.emptyCart.tr(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontFamily: "Sora",
+                            )), // Adjusted size
                       ],
                     ),
                   )
@@ -151,11 +145,6 @@ class _CartScreenState extends State<CartScreen> {
                           itemBuilder: (context, index) {
                             final item = state.foods[index];
                             return ListTile(
-                              // leading: Image.asset(
-                              //   item.food.imageUrl,
-                              //   width: 80,
-                              //   height: 80,
-                              // ),
                               title: Text(
                                 item.food.name,
                                 style: AppStyles.itemTitle,
@@ -219,7 +208,7 @@ class _CartScreenState extends State<CartScreen> {
                             );
                           },
                           child: Container(
-                            margin: EdgeInsets.all(16.0),
+                            margin: const EdgeInsets.all(16.0),
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
@@ -230,7 +219,7 @@ class _CartScreenState extends State<CartScreen> {
                                   vertical: AppSizes.verticalPadding * 3),
                               child: Center(
                                 child: Text(
-                                  "${LocaleKeys.orderNow.tr()} / ${state.totalValue}${LocaleKeys.usd.tr()}",
+                                  "${LocaleKeys.orderNow.tr()} / ${state.totalValue} ${LocaleKeys.usd.tr()}",
                                   style: AppStyles.orderButton, // Adjusted size
                                 ),
                               ),
