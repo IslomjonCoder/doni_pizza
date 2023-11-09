@@ -22,6 +22,7 @@ class PromotionRepository {
       return querySnapshot.docs.map((doc) {
         final data = doc.data();
         return Promotion.fromJson(data);
+
       }).toList();
     });
   }

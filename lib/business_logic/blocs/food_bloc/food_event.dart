@@ -31,4 +31,5 @@ class UpdateFoodItems extends FoodEvent {
   final List<FoodItem> foods;
 
   const UpdateFoodItems(this.foods);
+
 }

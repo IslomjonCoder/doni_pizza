@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
@@ -81,6 +82,7 @@ class FoodBlocRemote extends Bloc<FoodEvent, FoodStateRemote> {
   _searchFoodItems(SearchFoodItem event, Emitter<FoodStateRemote> emit) async {
     print("searching for ${event.query}");
     // emit(FetchFoodLoading());
+
     try {
       emit(FetchFoodSuccess(foods.where((element) => element.name.toLowerCase().contains(event.query.toLowerCase())).toList()));
       // final cachedData = cacheManager.get('search_${event.query}'); // Check cache for data
@@ -96,6 +98,39 @@ class FoodBlocRemote extends Bloc<FoodEvent, FoodStateRemote> {
       // cacheManager.add('search_${event.query}', foods);
     } catch (e) {
       emit(FetchFoodFailure('Failed to fetch food items: $e'));
+    }
+  }
+
+  _createFoodItem(CreateFoodItem event, Emitter<FoodStateRemote> emit) async {
+    // Handle creating a food item remotely
+    try {
+      await foodRepository.addFoodItem(event.foodItem);
+      final foods = await foodRepository.getAllFoodItems();
+      emit(FetchFoodSuccess(foods));
+    } catch (e) {
+      emit(FetchFoodFailure('Failed to create food item: $e'));
+    }
+  }
+
+  _updateFoodItem(UpdateFoodItem event, Emitter<FoodStateRemote> emit) async {
+    // Handle updating a food item remotely
+    try {
+      await foodRepository.updateFoodItem(event.foodItemId, event.updatedFoodItem);
+      final foods = await foodRepository.getAllFoodItems();
+      emit(FetchFoodSuccess(foods));
+    } catch (e) {
+      emit(FetchFoodFailure('Failed to update food item: $e'));
+    }
+  }
+
+  _deleteFoodItem(DeleteFoodItem event, Emitter<FoodStateRemote> emit) async {
+    // Handle deleting a food item remotely
+    try {
+      await foodRepository.deleteFoodItem(event.foodItemId);
+      final foods = await foodRepository.getAllFoodItems();
+      emit(FetchFoodSuccess(foods));
+    } catch (e) {
+      emit(FetchFoodFailure('Failed to delete food item: $e'));
     }
   }
 }
