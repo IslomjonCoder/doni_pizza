@@ -3,15 +3,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doni_pizza/business_logic/auth_bloc.dart';
 import 'package:doni_pizza/business_logic/auth_event.dart';
 import 'package:doni_pizza/business_logic/auth_state.dart';
-import 'package:doni_pizza/business_logic/cubits/user_data_cubit.dart';
-import 'package:doni_pizza/data/models/user_model.dart';
-import 'package:doni_pizza/data/repositories/user_repo.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:doni_pizza/presentation/ui/auth_screen/register_screen.dart';
-import 'package:doni_pizza/presentation/widgets/global_textfield.dart';
-import 'package:doni_pizza/utils/helpers/uid.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,8 +28,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

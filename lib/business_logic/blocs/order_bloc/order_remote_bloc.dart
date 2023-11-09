@@ -46,7 +46,6 @@ List<OrderModel> orders = [];
         .orderBy("timestamp", descending: true)
         .snapshots()
         .listen((event) {
-          print("${event.docs.length} ----------------");
       final newOrders = event.docs.map((e) {
         return OrderModel.fromJson(e.data());
       }).toList();
@@ -59,7 +58,6 @@ List<OrderModel> orders = [];
 
 // void updateOrders(List<OrderModel>){}
   void updateOrdersEventToState(UpdateOrdersEvent event, Emitter<OrderRemoteState> emit) async {
-    print('update orders event');
   emit(OrdersFetchedState(event.orders));
   }
 

@@ -48,13 +48,11 @@ class FoodItemRepository {
   /// Searches for food items based on a [query] string, filtering by name.
   Future<List<FoodItem>> searchFoodItems(String query) async {
     try {
-      print('searching for $query');
       final querySnapshot = await _firestore
           .collection(_foodItemsCollection)
           .where('name', isGreaterThanOrEqualTo: query)
           .where('name', isLessThan: "$query\uf8ff")
           .get();
-      print(querySnapshot.docs.length);
       if (querySnapshot.docs.isNotEmpty) {
         return querySnapshot.docs.map((doc) {
           return FoodItem.fromJson(doc.data());

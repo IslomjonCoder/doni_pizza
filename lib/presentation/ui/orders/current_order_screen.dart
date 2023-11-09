@@ -39,7 +39,6 @@ class _CurrentOrderScreenState extends State<CurrentOrderScreen> {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           BlocBuilder<OrderRemoteBloc, OrderRemoteState>(
             builder: (context, state) {
-              print(state);
               if (state is OrderRemoteInitial) {
                 Center(child: Text(LocaleKeys.noOrder.tr()));
               } else if (state is OrdersFetchedState) {

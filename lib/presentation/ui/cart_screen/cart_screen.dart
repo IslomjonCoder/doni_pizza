@@ -72,7 +72,6 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final foodBloc = context.read<FoodBloc>();
 
     return Scaffold(
@@ -89,8 +88,8 @@ class _CartScreenState extends State<CartScreen> {
             onTap: () {
               AwesomeDialog(
                 context: context,
-                dialogType: DialogType.WARNING,
-                animType: AnimType.BOTTOMSLIDE,
+                dialogType: DialogType.warning,
+                animType: AnimType.bottomSlide,
                 title: LocaleKeys.clearCart.tr(),
                 btnOkOnPress: () => foodBloc.add(ClearCartEvent()),
                 btnOkIcon: Icons.delete,
@@ -113,13 +112,11 @@ class _CartScreenState extends State<CartScreen> {
       // ...
       body: BlocBuilder<FoodBloc, FoodState>(
         builder: (context, state) {
-          print("state is $state");
           if (state is TodoInitialState || state is FoodLoadingState) {
             return const Center(child: CircularProgressIndicator(color: Colors.black));
           } else if (state is FoodErrorState) {
             return Center(child: Text(state.errorMessage, textAlign: TextAlign.center));
           } else if (state is FoodLoadedState) {
-            print(state.foods.length);
             return state.foods.isEmpty
                 ? Center(
                     child: Column(
@@ -183,7 +180,6 @@ class _CartScreenState extends State<CartScreen> {
                                           color: Colors.black87,
                                         ),
                                         onPressed: () {
-                                          print('IncrementCountEvent');
                                           foodBloc.add(IncrementCountEvent(item));
                                         },
                                       ),

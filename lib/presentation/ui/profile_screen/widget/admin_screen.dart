@@ -8,16 +8,15 @@ class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
 
   Future<void> _sendEmail(String email) async {
-    final emailLaunchUri = Uri(scheme: 'mailto', path: email);
-    if (await canLaunch(emailLaunchUri.toString())) {
-      await launch(emailLaunchUri.toString());
+    if (await canLaunchUrl(Uri(scheme: 'mailto', path: email))) {
+      await launchUrl(Uri(scheme: 'mailto', path: email));
     }
   }
 
   Future<void> _makeCall(String phoneNumber) async {
     final phoneLaunchUri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunch(phoneLaunchUri.toString())) {
-      await launch(phoneLaunchUri.toString());
+    if (await canLaunchUrl(phoneLaunchUri)) {
+      await launchUrl( phoneLaunchUri);
     }
   }
 

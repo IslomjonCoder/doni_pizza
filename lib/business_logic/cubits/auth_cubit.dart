@@ -43,7 +43,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   void checkAuthState() {
     _firebaseAuth.authStateChanges().listen((User? user) {
-      print('State changed: $user : Cubit');
       if (user == null) {
         emit(state.copyWith(status: AuthStateEnum.unauthenticated, user: user, userModel: null));
       } else {

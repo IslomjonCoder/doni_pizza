@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doni_pizza/data/models/user_model.dart';
-import 'package:doni_pizza/utils/formatters/formatter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserRepository {
