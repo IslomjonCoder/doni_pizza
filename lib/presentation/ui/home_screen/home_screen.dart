@@ -1,21 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/food_bloc/food_bloc.dart';
-import 'package:doni_pizza/business_logic/blocs/promotion_bloc/promotion_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/category_cubit/category_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/category_index_cubit/category_index_cubit.dart';
-import 'package:doni_pizza/business_logic/cubits/food_cubit/food_cubit.dart';
 import 'package:doni_pizza/data/models/category_model.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
-import 'package:doni_pizza/data/models/promotion_model.dart';
-import 'package:doni_pizza/data/repositories/category_repo.dart';
-import 'package:doni_pizza/data/repositories/food_repo.dart';
-import 'package:doni_pizza/presentation/ui/detail_screen/detail_screen.dart';
-import 'package:doni_pizza/presentation/ui/home_screen/categories/categories.dart';
 import 'package:doni_pizza/utils/constants/constants.dart';
 import 'package:doni_pizza/utils/constants/sizes.dart';
-import 'package:doni_pizza/utils/helpers/helper_functions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +16,6 @@ import 'package:doni_pizza/presentation/ui/home_screen/promotions/promotions.dar
 import 'package:doni_pizza/presentation/widgets/global_textfield.dart';
 import 'package:doni_pizza/utils/icons.dart';
 import 'package:gap/gap.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -75,8 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (category == 'All') {
         filteredFoods = allMenuItems;
       } else {
-        filteredFoods =
-            allMenuItems.where((item) => item.category == category).toList();
+        filteredFoods = allMenuItems.where((item) => item.category == category).toList();
       }
     });
   }
@@ -174,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: 40,
+              height: 50,
               child: BlocBuilder<CategoryCubit, List<CategoryModel>>(
                 builder: (context, state) {
                   return ListView.separated(
@@ -185,29 +173,38 @@ class _HomeScreenState extends State<HomeScreen> {
                       final category = state[index];
                       return GestureDetector(
                         onTap: () {
-                          final all =
-                              context.read<CategoryIndexCubit>().state == index;
-                          context
-                              .read<CategoryIndexCubit>()
-                              .changeCategory(all ? -1 : index);
+                          final all = context.read<CategoryIndexCubit>().state == index;
+                          context.read<CategoryIndexCubit>().changeCategory(all ? -1 : index);
                           all
                               ? context.read<FoodBlocRemote>().add(GetAll())
                               : context
                                   .read<FoodBlocRemote>()
                                   .add(GetFoodsByCategory(category.id!));
                         },
-                        child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                color:
-                                    context.watch<CategoryIndexCubit>().state ==
-                                            index
-                                        ? Colors.green
-                                        : Colors.grey),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            child: Text(category.name)),
+                        child: Card(
+                          shadowColor: Colors.black,
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: BorderSide(
+                                color: context.read<CategoryIndexCubit>().state == index
+                                    ? Colors.black
+                                    : Colors.transparent),
+                          ),
+                          color: context.watch<CategoryIndexCubit>().state == index
+                              ? Colors.black
+                              : Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(
+                              category.name,
+                              style: TextStyle(
+                                  color: context.watch<CategoryIndexCubit>().state == index
+                                      ? Colors.white
+                                      : Colors.black),
+                            ),
+                          ),
+                        ),
                       );
                     },
                     separatorBuilder: (context, index) {
@@ -225,7 +222,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-            Promotions(),
+            const Gap(10),
+            const Promotions(),
             // const Gap(TSizes.md),
             // BlocBuilder<PromotionBloc, PromotionState>(
             //   builder: (context, state) {
@@ -253,6 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
             //   },
             // ),
             // const Gap(TSizes.md),
+            const Gap(10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -266,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.w700,
                       )),
                 ),
-                Divider()
+                const Divider()
               ],
             ),
             BlocBuilder<FoodBlocRemote, FoodStateRemote>(
@@ -306,28 +305,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Row(
                                     children: [
                                       Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              7,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              3.5,
+                                          height: MediaQuery.of(context).size.height / 7,
+                                          alignment: Alignment.center,
+                                          width: MediaQuery.of(context).size.width / 3.5,
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(16.0),
-                                            image: DecorationImage(
+                                            borderRadius: BorderRadius.circular(16.0),
+                                            image: const DecorationImage(
                                               fit: BoxFit.fill,
-                                              image:
-                                                  AssetImage(AppImages.pizza),
+                                              image: AssetImage(AppImages.pizza),
                                             ),
                                           )),
-                                      SizedBox(width: 5.0),
+                                      const SizedBox(width: 5.0),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               item.name,
@@ -338,9 +329,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               maxLines: 10,
                                             ),
-                                            Text(
+                                            const Text(
                                               'Tanlang savatga qo\'shing va sotib oling!',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 color: Colors.grey,
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 14,
@@ -349,16 +340,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                               maxLines: 2,
                                             ),
                                             Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
                                                 Text(
                                                   '${item.price.toStringAsFixed(2)} ${LocaleKeys.usd.tr()}',
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       color: Colors.red,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      fontWeight: FontWeight.bold,
                                                       fontSize: 13,
                                                       fontFamily: 'Sora'),
                                                 ),
@@ -366,36 +354,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   onTap: () {
                                                     context
                                                         .read<FoodBloc>()
-                                                        .add(
-                                                            AddFoodEvent(item));
+                                                        .add(AddFoodEvent(item));
                                                     Fluttertoast.showToast(
-                                                      msg: LocaleKeys
-                                                          .successfully_added_to_cart
+                                                      msg: LocaleKeys.successfully_added_to_cart
                                                           .tr(),
-                                                      toastLength:
-                                                          Toast.LENGTH_SHORT,
-                                                      gravity:
-                                                          ToastGravity.BOTTOM,
-                                                      backgroundColor:
-                                                          Colors.white,
+                                                      toastLength: Toast.LENGTH_SHORT,
+                                                      gravity: ToastGravity.BOTTOM,
+                                                      backgroundColor: Colors.white,
                                                       textColor: Colors.black,
                                                       fontSize: 16.0,
                                                     );
                                                   },
                                                   child: Container(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            bottom: 8.0),
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    margin: const EdgeInsets.only(bottom: 8.0),
                                                     decoration: BoxDecoration(
                                                       color: Colors.red,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
+                                                      borderRadius: BorderRadius.circular(8),
                                                     ),
-                                                    child: Icon(
+                                                    child: const Icon(
                                                       Icons.shopping_cart,
                                                       color: Colors.white,
                                                     ),
@@ -414,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ));
                     },
                   );
-                } else if (state is FetchFoodLoading) {
+                } else if (state is FetchFoodLoading || state is FoodInitial) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is FetchFoodFailure) {
                   return Center(child: Text(state.message));
@@ -422,7 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Center(child: Text('Unknown state: $state'));
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 100.0,
             )
           ],

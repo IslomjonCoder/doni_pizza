@@ -26,3 +26,9 @@ class SearchFoodItem extends FoodEvent {
   @override
   List<Object> get props => [query];
 }
+
+class UpdateFoodItems extends FoodEvent {
+  final List<FoodItem> foods;
+
+  const UpdateFoodItems(this.foods);
+}

@@ -19,6 +19,8 @@ class PromotionBloc extends Bloc<PromotionEvent, PromotionState> {
     on<DeletePromotion>(_deletePromotion);
   }
 
+
+
   _addPromotion(AddPromotion event, Emitter<PromotionState> emit) async {
     emit(PromotionLoading());
     try {

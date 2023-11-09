@@ -1,6 +1,10 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
+import 'package:doni_pizza/utils/helpers/firebase_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -69,12 +73,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           children: [
             ZoomTapAnimation(
-              onTap: () {
-                showCameraAndGalleryDialog(context, (imagePath) {
+              onTap: () async {
+                showCameraAndGalleryDialog(context, (imagePath) async {
                   if (imagePath != null) {
                     setState(() {
                       selectedImagePath = imagePath;
                     });
+                    final url = await TFirebaseHelper.uploadImage(
+                        File(imagePath), 'images/profile/${imagePath.split('/').last}');
+                    FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update({'imageUrl': url});
+                    context.read<AuthCubit>().updateImageUrl(url);
                   }
                 });
               },
@@ -85,17 +93,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(100),
                   color: selectedImagePath == null ? Colors.grey.shade400 : Colors.black,
                 ),
-                child: selectedImagePath != null
+                child: selectedImagePath != null || context.watch<AuthCubit>().state.userModel?.imageUrl != null
                     ? Stack(
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(120),
-                            child: Image.file(
-                              File(selectedImagePath!),
-                              height: 120,
-                              width: 120,
-                              fit: BoxFit.cover,
-                            ),
+                            child: context.watch<AuthCubit>().state.userModel != null &&
+                                    context.watch<AuthCubit>().state.userModel!.imageUrl != null
+                                ? CachedNetworkImage(
+                                    imageUrl: context.watch<AuthCubit>().state.userModel!.imageUrl!,
+                                    height: 120,
+                                    width: 120,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.file(
+                                    File(selectedImagePath!),
+                                    height: 120,
+                                    width: 120,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ],
                       )
@@ -111,16 +127,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Column(
               children: [
                 Text(
-                  LocaleKeys.user.tr(),
+                  context.watch<AuthCubit>().state.userModel != null
+                      ? context.read<AuthCubit>().state.userModel!.name
+                      : LocaleKeys.user.tr(),
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontFamily: 'Sora',
                     fontSize: 20,
                   ),
                 ),
-                const Text(
-                  "+(998) __ ___ __ __",
-                  style: TextStyle(
+                Text(
+                  context.watch<AuthCubit>().state.userModel != null
+                      ? context.read<AuthCubit>().state.userModel!.phoneNumber
+                      : '+(998) __ ___ __ __',
+                  style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontFamily: 'Sora',
                     fontSize: 12,

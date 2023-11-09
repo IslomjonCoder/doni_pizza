@@ -7,9 +7,9 @@ class OrderRemoteInitial extends OrderRemoteState {}
 class OrderRemoteLoading extends OrderRemoteState {}
 
 class OrderCreatedState extends OrderRemoteState {
-  final OrderModel order;
 
-  OrderCreatedState(this.order);
+
+  OrderCreatedState();
 }
 
 class OrdersFetchedState extends OrderRemoteState {

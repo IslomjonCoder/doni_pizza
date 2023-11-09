@@ -1,4 +1,6 @@
-import 'package:doni_pizza/presentation/ui/auth_screen/welcome_screen.dart';
+import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:doni_pizza/business_logic/cubits/user_data_cubit.dart';
 import 'package:doni_pizza/utils/colors.dart';
 import 'package:doni_pizza/utils/constants/sizes.dart';
 import 'package:doni_pizza/utils/constants/texts.dart';
@@ -14,6 +16,7 @@ import 'package:doni_pizza/business_logic/auth_state.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:doni_pizza/presentation/widgets/global_textfield.dart';
 import 'package:doni_pizza/utils/dialogs/snackbar_dialogs.dart';
+import 'package:gap/gap.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -52,7 +55,6 @@ class RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       backgroundColor: Colors.white,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -69,130 +71,111 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildRegistrationForm(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-      physics: const BouncingScrollPhysics(),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            SizedBox(
-                height: 143,
-                child: Center(
-                  child: Text(TTexts.register,
-                      style: TFonts.titleScreen.copyWith(color: AppColors.c1E293B)),
-                )),
-            Column(
+    return Container(
+      height: context.height,
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              image: CachedNetworkImageProvider('https://images.unsplash.com/photo-1520201163981-8cc95007dd2a?q=80&w=2736&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')
+          )
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.6)
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
+          physics: const BouncingScrollPhysics(),
+          child: Form(
+            key: _formKey,
+            child: Column(
               children: [
-                GlobalTextField(
-                  controller: nameController,
-                  hintText: 'Doni Pizza',
-                  keyboardType: TextInputType.name,
-                  textInputAction: TextInputAction.next,
-                  caption: LocaleKeys.name.tr(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return LocaleKeys.enter_name.tr();
-                    }
-                    return null;
-                  },
+                const Gap(kToolbarHeight*2),
+                SizedBox(
+                    height: 143,
+                    child: Center(
+                      child: Text(TTexts.register,
+                          style: TFonts.titleScreen.copyWith(color: AppColors.white)),
+                    )),
+                Column(
+                  children: [
+                    GlobalTextField(
+                      isDark: true,
+                      controller: nameController,
+                      hintText: 'Doni Pizza',
+                      keyboardType: TextInputType.name,
+                      textInputAction: TextInputAction.next,
+                      caption: LocaleKeys.name.tr(),
+                      onChanged: (value) {
+                        context.read<UserDataCubit>().updateName(value.trim());
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return LocaleKeys.enter_name.tr();
+                        }
+                        return null;
+                      },
+                    ),
+                    GlobalTextField(
+                      isDark: true,
+                      controller: phoneController,
+                      hintText: '+(998) 99-999-99',
+                      onChanged: (value) {
+                        context.read<UserDataCubit>().updatePhoneNumber(value);
+                      },
+                      keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.next,
+                      caption: LocaleKeys.phone_number.tr(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return LocaleKeys.errorPhoneNumber.tr();
+                        }
+                        return null;
+                      },
+                    ),
+
+                  ],
                 ),
-                GlobalTextField(
-                  controller: phoneController,
-                  hintText: '+(998) 99-999-99',
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.next,
-                  caption: LocaleKeys.phone_number.tr(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return LocaleKeys.errorPhoneNumber.tr();
-                    }
-                    return null;
-                  },
-                ),
-                GlobalTextField(
-                  hintText: '********',
-                  keyboardType: TextInputType.visiblePassword,
-                  textInputAction: TextInputAction.next,
-                  caption: LocaleKeys.password.tr(),
-                  controller: passwordController,
-                  validator: passwordsMatch,
-                  max: 1,
-                ),
-                GlobalTextField(
-                  hintText: '********',
-                  keyboardType: TextInputType.visiblePassword,
-                  textInputAction: TextInputAction.done,
-                  caption: LocaleKeys.confirmPassword.tr(),
-                  controller: confirmPasswordController,
-                  validator: passwordsMatch,
-                  max: 1,
+                const Gap(kToolbarHeight/2),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.white),
+                        padding: MaterialStateProperty.all(const EdgeInsets.all(TSizes.sm)),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(TSizes.lg),
+                          ),
+                        )
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        print(context.read<UserDataCubit>().state);
+                          context.read<AuthBloc>().add(RegisterWithGoogleEvent());
+                      }
+                    },
+                    label: Text(
+                      context.watch<AuthBloc>().state.registerWithEmailAndPasswordStatus ==
+                              Status.loading
+                          ? TTexts.loading
+                          : LocaleKeys.signUp.tr(),
+                      style: Styles.buttonTextStyle,
+                    ),
+                    icon: context.read<AuthBloc>().state.registerWithEmailAndPasswordStatus ==
+                            Status.loading
+                        ? const SizedBox(
+                            height: TSizes.customPaddingSm,
+                            width: TSizes.customPaddingSm,
+                            child: CircularProgressIndicator(color: Colors.black,),
+                          )
+                        :  SvgPicture.asset(AppImages.google),
+                  ),
                 ),
               ],
             ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    if (passwordController.text == confirmPasswordController.text) {
-                      context.read<AuthBloc>().add(RegisterEvent(
-                            name: nameController.text.trim(),
-                            phoneNumber: phoneController.text.trim(),
-                            password: passwordController.text.trim(),
-                          ));
-                    }
-                  }
-                },
-                style: ButtonStyles.roundedButtonStyle,
-                label: Text(
-                  context.watch<AuthBloc>().state.registerWithEmailAndPasswordStatus ==
-                          Status.loading
-                      ? TTexts.loading
-                      : LocaleKeys.signUp.tr(),
-                  style: Styles.buttonTextStyle,
-                ),
-                icon: context.read<AuthBloc>().state.registerWithEmailAndPasswordStatus ==
-                        Status.loading
-                    ? const SizedBox(
-                        height: TSizes.customPaddingSm,
-                        width: TSizes.customPaddingSm,
-                        child: CircularProgressIndicator(),
-                      )
-                    : const SizedBox(),
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  context.read<AuthBloc>().add(GoogleLoginEvent());
-                },
-                style: ButtonStyles.roundedButtonStyle,
-                label: Text(
-                  'Login with Google',
-                  style: ButtonStyles.buttonTextStyle.copyWith(color: AppColors.c1E293B),
-                ),
-                icon: BlocConsumer<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    if (state.signInWithGoogleStatus == Status.loading) {
-                      return const SizedBox.square(
-                        dimension: TSizes.customPaddingSm,
-                        child: CircularProgressIndicator(color: AppColors.c2B8761),
-                      );
-                    }
-                    return SvgPicture.asset(AppImages.google);
-                  },
-                  listener: (BuildContext context, AuthState state) {
-                    if (state.error != null) {
-                      TDialog.showAlert(context: context, message: state.error!);
-                    }
-                  },
-                ),
-              ),
-            ),
-            // const SizedBox(height: TSizes.customLetsInSpacing),
-          ],
+          ),
         ),
       ),
     );
