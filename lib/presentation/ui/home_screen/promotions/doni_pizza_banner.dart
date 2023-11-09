@@ -5,8 +5,8 @@ import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 import '../../../../utils/icons.dart';
 
 
-class Doni_pizza_banner extends StatelessWidget {
-  const Doni_pizza_banner({
+class DoniPizzaBanner extends StatelessWidget {
+  const DoniPizzaBanner({
     super.key,
   });
 
@@ -51,9 +51,7 @@ class Doni_pizza_banner extends StatelessWidget {
               Row(
                 children: [
                   ZoomTapAnimation(
-                    onTap: () {
-                      launch("tel:+998941590509");
-                    },
+                    onTap: () => launchUrl(Uri(scheme: 'tel', path: '+998941590509')),
                     child: const Row(
                       children: [
                         Icon(
@@ -75,7 +73,7 @@ class Doni_pizza_banner extends StatelessWidget {
                   ZoomTapAnimation(
                     onTap: () {
                       const String locationUrl = "https://yandex.com/navi/?ll=70.546895%2C41.045763&mode=routes&rtext=41.293235%2C69.276259~41.076267%2C71.818334&rtt=auto&ruri=~&z=8";
-                      launch(locationUrl);
+                      launchUrl(Uri(scheme: 'https', path: locationUrl));
                     },
                     child: const Row(
                       children: [

@@ -14,7 +14,6 @@ class FoodCubit extends Cubit<List<FoodItem>> {
       final foods = await foodItemRepository.getAllFoodItems();
       emit(foods);
     } catch (e) {
-      print("Error load all foods:$e");
     }
   }
 
@@ -23,8 +22,6 @@ class FoodCubit extends Cubit<List<FoodItem>> {
       final foodsByCategory = await foodItemRepository.getFoodItemsInCategory(categoryId);
       emit(foodsByCategory);
     } catch (e) {
-      print(e);
-      print("Error load foods by category");
     }
   }
 
@@ -33,7 +30,6 @@ class FoodCubit extends Cubit<List<FoodItem>> {
       final foodsByCategory = await foodItemRepository.searchFoodItems(query);
       emit(foodsByCategory);
     } catch (e) {
-      print("Error load foods using search:$e");
     }
   }
 }

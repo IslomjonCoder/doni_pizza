@@ -79,11 +79,9 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
           const CurrentOrderScreen(),
           BlocBuilder<OrderRemoteBloc, OrderRemoteState>(
             builder: (context, state) {
-              print('order remote state: $state');
               if (state is OrderLoadingState) {
                 return const Center(child: CircularProgressIndicator(color: Colors.black));
               } else if (state is OrdersFetchedState) {
-                print(context.read<AuthCubit>().state.user?.uid);
                 final successOrders = state.orders
                     .where((element) => element.status == OrderStatus.delivered && element.userId == context.read<AuthCubit>().state.user?.uid)
                     .toList();

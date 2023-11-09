@@ -17,7 +17,6 @@ class CartHiveDatabase {
   // Add methods to perform operations for each event type
 
   Future<void> addOrderItem(FoodItem orderItem) async {
-    print('add event');
     final box = await Hive.openBox<OrderItem>('orderItems');
     if( box.containsKey(orderItem.id)){
       final OrderItem? currentOrderItem = box.get(orderItem.id);
@@ -31,21 +30,16 @@ class CartHiveDatabase {
 
   Future<void> increaseOrderItemQuantity(OrderItem orderItem) async {
     final box = await Hive.openBox<OrderItem>('orderItems');
-    final index = box.values.toList();
     final updatedOrderItem = orderItem.copyWith(quantity: orderItem.quantity + 1);
     await box.put(orderItem.food.id, updatedOrderItem);
   }
 
   Future<void> decreaseOrderItemQuantity(OrderItem orderItem) async {
     final box = await Hive.openBox<OrderItem>('orderItems');
-    final index = box.values.toList();
-    print('ok');
     if (orderItem.quantity == 1) {
-      print('ok2');
       await box.delete(orderItem.food.id);
       return;
     }
-    print('ok1');
     final updatedOrderItem = orderItem.copyWith(quantity: orderItem.quantity - 1);
     await box.put(orderItem.food.id, updatedOrderItem);
   }

@@ -1,5 +1,5 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:doni_pizza/data/models/food_model.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
 
@@ -59,7 +59,6 @@ class LocalDatabase {
         await db.insert('food_table', foodItem.toJson());
       }
     } catch (e) {
-      print("Error insert: $e");
     }
   }
 
@@ -86,7 +85,6 @@ class LocalDatabase {
         return OrderItem(food: foodItem, quantity: quantity);
       });
     } catch (e) {
-      print("Error: $e");
       throw Exception('Error fetching all food items: $e');
     }
   }

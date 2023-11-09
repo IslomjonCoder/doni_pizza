@@ -13,8 +13,6 @@ class Promotions extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PromotionBloc, PromotionState>(
       builder: (context, state) {
-        print(state);
-        if (state is PromotionError) print(state.error);
 
         if (state is PromotionInitial) {
           context.read<PromotionBloc>().add(GetAllPromotions());
@@ -31,15 +29,13 @@ class Promotions extends StatelessWidget {
 
               ),
               items: [
-                const Doni_pizza_banner(),
+                const DoniPizzaBanner(),
                 ...List.generate(
                     state.promotions.length,
-                    (index) => Container(
-                          child: CachedNetworkImage(
-                            imageUrl: state.promotions[index].imageUrl,
-                            fit: BoxFit.fitWidth,
-                          ),
-                        ))
+                    (index) => CachedNetworkImage(
+                      imageUrl: state.promotions[index].imageUrl,
+                      fit: BoxFit.fitWidth,
+                    ))
                 // SetOfDoniPizza(image: AppImages.dostavka,),
                 // SetOfDoniPizza(image: AppImages.juftlik,),
                 // SetOfDoniPizza(image: AppImages.dostlar,),
@@ -55,7 +51,7 @@ class Promotions extends StatelessWidget {
               autoPlayInterval: const Duration(seconds: 2),
             ),
             items: const [
-              Doni_pizza_banner(),
+              DoniPizzaBanner(),
 
               // SetOfDoniPizza(image: AppImages.dostavka,),
               // SetOfDoniPizza(image: AppImages.juftlik,),

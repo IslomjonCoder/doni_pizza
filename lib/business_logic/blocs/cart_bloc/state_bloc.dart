@@ -98,7 +98,6 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
       final orderItems = await hiveDatabase.getAllOrderItems();
       emit(FoodLoadedState(orderItems));
     } catch (e) {
-      print(e);
       emit(FoodErrorState('Failed to load food items'));
     }
   }
@@ -134,7 +133,6 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
       final orderItems = await hiveDatabase.getAllOrderItems();
       emit(FoodLoadedState(orderItems));
     } catch (e) {
-      print('${e}increment');
       emit(FoodErrorState('Failed to increment count'));
     }
   }
@@ -145,7 +143,6 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
       final orderItems = await hiveDatabase.getAllOrderItems();
       emit(FoodLoadedState(orderItems));
     } catch (e) {
-      print('$e delete');
       emit(FoodErrorState('Failed to delete food item'));
     }
   }
@@ -159,7 +156,6 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
       final orderItems = await hiveDatabase.getAllOrderItems();
       emit(FoodLoadedState(orderItems));
     } catch (e) {
-      print('${e}decrement');
       emit(FoodErrorState('Failed to decrement count'));
     }
   }

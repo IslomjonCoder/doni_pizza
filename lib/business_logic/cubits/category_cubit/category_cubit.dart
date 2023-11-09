@@ -14,7 +14,7 @@ class CategoryCubit extends Cubit<List<CategoryModel>> {
       final categories = await categoryRepository.getAllCategories();
       emit(categories);
     } catch (e) {
-      print("Error loading all categories: $e");
+
     }
   }
 
@@ -23,7 +23,6 @@ class CategoryCubit extends Cubit<List<CategoryModel>> {
       await categoryRepository.addCategory(category);
       fetchCategories(); // Refresh the list of categories after adding a new one
     } catch (e) {
-      print("Error adding category: $e");
     }
   }
 
@@ -32,7 +31,6 @@ class CategoryCubit extends Cubit<List<CategoryModel>> {
       await categoryRepository.updateCategory(category);
       fetchCategories(); // Refresh the list of categories after updating one
     } catch (e) {
-      print("Error updating category: $e");
     }
   }
 
@@ -41,7 +39,6 @@ class CategoryCubit extends Cubit<List<CategoryModel>> {
       await categoryRepository.deleteCategory(categoryId);
       fetchCategories(); // Refresh the list of categories after deleting one
     } catch (e) {
-      print("Error deleting category: $e");
     }
   }
 }

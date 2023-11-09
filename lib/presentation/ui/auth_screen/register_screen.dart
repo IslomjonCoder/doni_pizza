@@ -152,7 +152,6 @@ class RegisterScreenState extends State<RegisterScreen> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        print(context.read<UserDataCubit>().state);
                           context.read<AuthBloc>().add(RegisterWithGoogleEvent());
                       }
                     },

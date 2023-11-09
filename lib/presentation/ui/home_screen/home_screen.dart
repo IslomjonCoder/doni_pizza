@@ -58,16 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void updateCategory(String category) {
-    setState(() {
-      selectedCategory = category;
-      if (category == 'All') {
-        filteredFoods = allMenuItems;
-      } else {
-        filteredFoods = allMenuItems.where((item) => item.category == category).toList();
-      }
-    });
-  }
+
 
   // final colors = <Color>[
   //   Colors.red,
@@ -112,7 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 caption: '',
                 controller: searchController,
                 onChanged: (query) {
-                  print(query);
                   context.read<FoodBlocRemote>().add(SearchFoodItem(query));
                 },
               )

@@ -1,5 +1,4 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doni_pizza/business_logic/cubits/user_data_cubit.dart';
 import 'package:doni_pizza/data/models/user_model.dart';
@@ -22,7 +21,6 @@ class AuthRepository {
       if (googleUser == null) {
         return null;
       }
-      print('googleUser: ${googleUser.email}');
       final userExist = await FirebaseFirestore.instance
           .collection('users')
           .where('email', isEqualTo: googleUser.email)
@@ -34,6 +32,7 @@ class AuthRepository {
           idToken: googleAuth.idToken,
         );
         final UserCredential authResult = await _auth.signInWithCredential(credential);
+        return authResult.user;
       }
       else{
         Navigator.push(
@@ -41,7 +40,7 @@ class AuthRepository {
           MaterialPageRoute(builder: (context) => const RegisterScreen()),
         );
         AwesomeDialog(
-          context: navigatorKey.currentState!.context!,
+          context: navigatorKey.currentState!.context,
           dialogType: DialogType.info,
           animType: AnimType.bottomSlide,
           title: 'Register',
@@ -76,7 +75,7 @@ class AuthRepository {
         idToken: googleAuth.idToken,
       );
       final UserCredential authResult = await _auth.signInWithCredential(credential);
-      final userExist = await FirebaseFirestore.instance
+       await FirebaseFirestore.instance
           .collection('users')
           .doc(authResult.user!.uid)
           .set(UserModel(

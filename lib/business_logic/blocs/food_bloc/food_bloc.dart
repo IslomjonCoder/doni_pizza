@@ -56,9 +56,7 @@ class FoodBlocRemote extends Bloc<FoodEvent, FoodStateRemote> {
   _fetchFoodItemsByCategory(GetFoodsByCategory event, Emitter<FoodStateRemote> emit) async {
     emit(FetchFoodLoading());
     try {
-      print(event.categoryId);
       final categoryFoods = foods.where((element) {
-        print(element.category.id);
         return element.category.id == event.categoryId;
       }).toList();
       emit(FetchFoodSuccess(categoryFoods));
@@ -79,7 +77,6 @@ class FoodBlocRemote extends Bloc<FoodEvent, FoodStateRemote> {
   }
 
   _searchFoodItems(SearchFoodItem event, Emitter<FoodStateRemote> emit) async {
-    print("searching for ${event.query}");
     // emit(FetchFoodLoading());
     try {
       emit(FetchFoodSuccess(foods.where((element) => element.name.toLowerCase().contains(event.query.toLowerCase())).toList()));

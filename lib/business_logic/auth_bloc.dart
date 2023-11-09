@@ -1,5 +1,4 @@
 import 'package:doni_pizza/business_logic/auth_event.dart';
-import 'package:doni_pizza/data/models/user_model.dart';
 import 'package:doni_pizza/data/repositories/user_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doni_pizza/business_logic/auth_state.dart';
