@@ -1,6 +1,7 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doni_pizza/business_logic/cubits/user_data_cubit.dart';
+import 'package:doni_pizza/presentation/ui/tab_box/tab_box.dart';
 import 'package:doni_pizza/utils/colors.dart';
 import 'package:doni_pizza/utils/constants/sizes.dart';
 import 'package:doni_pizza/utils/constants/texts.dart';
@@ -132,7 +133,6 @@ class RegisterScreenState extends State<RegisterScreen> {
                         return null;
                       },
                     ),
-
                   ],
                 ),
                 const Gap(kToolbarHeight/2),

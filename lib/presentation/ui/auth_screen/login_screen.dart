@@ -37,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
             // final userDataCubit = context.read<UserDataCubit>().state;
             // final userUid = FirebaseAuth.instance.currentUser!.uid;
             // UserRepository().storeUserData(UserModel(id: userUid, name: userDataCubit.name, phoneNumber: userDataCubit.phoneNumber, email: ''));
-
           } else if (state.signInWithEmailAndPasswordStatus == Status.failure) {
             // Display an error message to the user
             TDialog.showAlert(context: context, message: state.error!);
@@ -70,16 +69,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 143,
                     child: Center(
                       child: Text(TTexts.login,
-                          style: TFonts.titleScreen.copyWith(color: Colors.white  )),
+                          style: TFonts.titleScreen.copyWith(color: Colors.white)),
                     )),
                 const Gap(TSizes.md),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     style: ButtonStyle(
-                      padding:  MaterialStateProperty.all(const EdgeInsets.all(TSizes.sm)),
-                      backgroundColor: MaterialStateProperty.all(Colors.white),
-
+                        padding: MaterialStateProperty.all(const EdgeInsets.all(TSizes.sm)),
+                        backgroundColor: MaterialStateProperty.all(Colors.white),
                         shape: MaterialStateProperty.all(RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(TSizes.lg),
                             side: const BorderSide(color: Colors.black, width: 2)))),

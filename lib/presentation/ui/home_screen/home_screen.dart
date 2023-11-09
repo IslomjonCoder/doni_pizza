@@ -338,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   style: const TextStyle(
                                                       color: Colors.red,
                                                       fontWeight: FontWeight.bold,
-                                                      fontSize: 13,
+                                                      fontSize: 14,
                                                       fontFamily: 'Sora'),
                                                 ),
                                                 ZoomTapAnimation(
