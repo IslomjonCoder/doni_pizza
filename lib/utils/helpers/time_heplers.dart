@@ -1,14 +1,15 @@
 class TTimeHelpers {
   static DateTime timestampToDateTime(int unixTimestamp) {
     final millisecondsSinceEpoch = unixTimestamp * 1000;
-    return DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch, isUtc: true);
+    return DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
   }
 
   static int dateTimeToTimestamp(DateTime timestamp) {
-    final utcDateTime = timestamp.toUtc();
+    final utcDateTime = timestamp.toLocal();
     final timestampInSeconds = utcDateTime.millisecondsSinceEpoch ~/ 1000;
     return timestampInSeconds;
   }
+
 
   static String dateTimeToString(DateTime timestamp) {
     final formattedDate =

@@ -74,4 +74,6 @@ abstract class LocaleKeys {
   static const ok = "ok";
   static const error = "error";
   static const orderCreated = "order_created";
+  static const youCantOrder = "you_cant_order";
+
 }

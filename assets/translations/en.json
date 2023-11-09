@@ -67,5 +67,6 @@
   "cancel": "Cancel",
   "sure_to_clear_cart": "Are you sure you want to clear the cart?",
   "current_orders": "Current",
-  "all_orders": "All"
+  "all_orders": "All",
+  "you_cant_order" : "You can't order now",
 }

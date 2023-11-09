@@ -1,5 +1,5 @@
-import 'package:doni_pizza/presentation/router_app.dart';
 import 'package:flutter/material.dart';
+import 'package:doni_pizza/presentation/router_app.dart';
 import 'package:doni_pizza/utils/icons.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -9,7 +9,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animation;
 
@@ -25,19 +26,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _animation = Tween<Offset>(
       begin: const Offset(1, -3),
       end: const Offset(0, -6),
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.fastEaseInToSlowEaseOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn));
 
     _controller.forward();
 
-    _controller.addStatusListener(
-      (status) {
-        if (status == AnimationStatus.completed) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const RouterApp()),
-          );
-        }
-      },
-    );
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const RouterApp()),
+        );
+      }
+    });
   }
 
   @override

@@ -39,6 +39,7 @@ class AuthRepository {
           navigatorKey.currentContext!,
           MaterialPageRoute(builder: (context) => const RegisterScreen()),
         );
+        // ignore: use_build_context_synchronously
         AwesomeDialog(
           context: navigatorKey.currentState!.context,
           dialogType: DialogType.info,

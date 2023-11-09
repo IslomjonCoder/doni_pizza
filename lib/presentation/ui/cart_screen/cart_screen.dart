@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/utils/device/device_utility.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -136,12 +137,17 @@ class _CartScreenState extends State<CartScreen> {
                 : Column(
                     children: [
                       Expanded(
-                        child: ListView.builder(
+                        child: ListView.separated(
                           physics: const BouncingScrollPhysics(),
                           itemCount: state.foods.length,
                           itemBuilder: (context, index) {
                             final item = state.foods[index];
                             return ListTile(
+                              leading: SizedBox(
+                                child: CachedNetworkImage(imageUrl: item.food.imageUrl),
+                                width: 100,
+                                height: 100,
+                              ),
                               title: Text(
                                 item.food.name,
                                 style: AppStyles.itemTitle,
@@ -189,6 +195,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             );
                           },
+                          separatorBuilder: (BuildContext context, int index) => const Divider(),
                         ),
                       ),
                       if (state.foods.isNotEmpty)

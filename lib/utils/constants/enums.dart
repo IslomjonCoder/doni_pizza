@@ -1,4 +1,4 @@
-enum OrderStatus { pending, preparing, onRoute, delivered, canceled }
+enum OrderStatus { canceled, pending, preparing, onRoute, delivered,  }
 
 enum PaymentMethod { cash, card }
 
