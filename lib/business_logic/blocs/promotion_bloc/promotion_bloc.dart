@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doni_pizza/data/models/promotion_model.dart';
 import 'package:doni_pizza/data/repositories/promotion_repo.dart';
 import 'package:doni_pizza/utils/helpers/firebase_helper.dart';
@@ -21,7 +20,7 @@ class PromotionBloc extends Bloc<PromotionEvent, PromotionState> {
     init();
   }
   init() {
-    promotionRepository.getPromotionsStream().listen((event) {
+    promotionRepository.getPromotionStream().listen((event) {
       print(event);
     });
   }
