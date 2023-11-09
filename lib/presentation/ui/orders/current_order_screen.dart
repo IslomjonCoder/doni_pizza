@@ -23,10 +23,8 @@ class _CurrentOrderScreenState extends State<CurrentOrderScreen> {
     return formattedTime;
   }
 
-  String getFutureTime() {
-    final now = DateTime.now();
-    final futureTime = now.add(const Duration(minutes: 40));
-    final formattedTime = DateFormat('HH:mm').format(futureTime);
+  String getFutureTime(DateTime dateTime) {
+    final formattedTime = DateFormat('HH:mm').format(dateTime);
     return formattedTime;
   }
 
@@ -43,7 +41,9 @@ class _CurrentOrderScreenState extends State<CurrentOrderScreen> {
                 Center(child: Text(LocaleKeys.noOrder.tr()));
               } else if (state is OrdersFetchedState) {
                 final currentOrder = state.orders
-                    .where((element) => element.status != OrderStatus.delivered)
+                    .where((element) =>
+                        element.status != OrderStatus.delivered &&
+                        element.status != OrderStatus.canceled)
                     .toList();
 
                 return (currentOrder.isEmpty)
@@ -67,7 +67,7 @@ class _CurrentOrderScreenState extends State<CurrentOrderScreen> {
                         child: Column(
                           children: [
                             Text(
-                              "Yetkaziladigan vaqt: ${getCurrentTime()} - ${getFutureTime()}",
+                              "Yetkaziladigan vaqt: ${getCurrentTime(currentOrder.first.timestamp)} - ${getFutureTime(currentOrder.first.timestamp.add(Duration(minutes: 40)))}",
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Sora',
@@ -85,7 +85,8 @@ class _CurrentOrderScreenState extends State<CurrentOrderScreen> {
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 50),
-                            const ConditionIcons()
+
+                                ConditionIcons()
                           ],
                         ),
                       );
@@ -111,18 +112,18 @@ class ConditionIcons extends StatelessWidget {
     return BlocBuilder<OrderRemoteBloc, OrderRemoteState>(
       builder: (context, state) {
         if (state is OrdersFetchedState) {
-          final currentOrder = state.orders.first.status;
+          final orders = state.orders
+              .where((element) =>
+                  element.status != OrderStatus.delivered && element.status != OrderStatus.canceled)
+              .toList();
+          final currentOrder = orders.first.status;
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                   padding: const EdgeInsets.all(15.0),
                   decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(50.0),
-                          bottomLeft: Radius.circular(50.0),
-                          topRight: Radius.circular(30.0),
-                          bottomRight: Radius.circular(30.0)),
+                      borderRadius: BorderRadius.circular(10),
                       color: currentOrder.index >= OrderStatus.pending.index
                           ? Colors.indigo.shade300
                           : Colors.grey.shade200),
@@ -140,11 +141,7 @@ class ConditionIcons extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(15.0),
                 decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        bottomLeft: Radius.circular(10.0),
-                        topRight: Radius.circular(10.0),
-                        bottomRight: Radius.circular(10.0)),
+                    borderRadius: BorderRadius.circular(10),
                     color: currentOrder.index >= OrderStatus.preparing.index
                         ? Colors.indigo.shade300
                         : Colors.grey.shade200),
@@ -186,14 +183,9 @@ class ConditionIcons extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(15.0),
                 decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        bottomLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(50.0),
-                        bottomRight: Radius.circular(50.0)),
+                    borderRadius: BorderRadius.circular(10),
                     color: currentOrder.index >= OrderStatus.delivered.index
-                        ? Colors.greenAccent.shade700
-
+                        ? Colors.indigo.shade300
                         : Colors.grey.shade200),
                 child: const Icon(
                   Icons.file_download_done,

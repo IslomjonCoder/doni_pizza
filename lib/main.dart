@@ -1,4 +1,4 @@
-import 'package:doni_pizza/business_logic/auth_bloc.dart';
+import 'package:doni_pizza/business_logic/blocs/auth_bloc/auth_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/order_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/food_bloc/food_bloc.dart';
@@ -25,6 +25,7 @@ import 'package:doni_pizza/presentation/ui/splash_screen/splash_screen.dart';
 import 'package:doni_pizza/utils/colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -92,6 +93,7 @@ class MyApp extends StatelessWidget {
                 iconTheme: IconThemeData(color: AppColors.c475569))),
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
+        scrollBehavior: CupertinoScrollBehavior(),
         home: const SplashScreen(),
       ),
     );

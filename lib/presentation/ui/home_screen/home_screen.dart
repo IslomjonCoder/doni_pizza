@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/food_bloc/food_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/category_cubit/category_cubit.dart';
@@ -300,9 +301,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           width: MediaQuery.of(context).size.width / 3.5,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(16.0),
-                                            image: const DecorationImage(
-                                              fit: BoxFit.fill,
-                                              image: AssetImage(AppImages.pizza),
+                                            image:  DecorationImage(
+                                              fit: BoxFit.scaleDown,
+                                              image: CachedNetworkImageProvider(item.imageUrl),
                                             ),
                                           )),
                                       const SizedBox(width: 5.0),

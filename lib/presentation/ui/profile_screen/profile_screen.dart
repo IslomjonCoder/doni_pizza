@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
+import 'package:doni_pizza/presentation/ui/auth_screen/login_screen.dart';
 import 'package:doni_pizza/utils/helpers/firebase_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -236,7 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onPressed: () {
                                   Navigator.pop(context);
                                   context.read<AuthCubit>().logout();
-                                  // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const LoginScreen()));
+                                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const LoginScreen()), (route) => false);
                                 },
                                 child: Text(
                                   LocaleKeys.yes.tr(),

@@ -10,9 +10,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:doni_pizza/business_logic/auth_bloc.dart';
-import 'package:doni_pizza/business_logic/auth_event.dart';
-import 'package:doni_pizza/business_logic/auth_state.dart';
+import 'package:doni_pizza/business_logic/blocs/auth_bloc/auth_bloc.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:doni_pizza/presentation/widgets/global_textfield.dart';
 import 'package:doni_pizza/utils/dialogs/snackbar_dialogs.dart';
@@ -56,7 +54,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: BlocListener<AuthBloc, AuthState>(
+      body: BlocListener<AuthBloc, AuthUserState>(
         listener: (context, state) {
           if (state.registerWithEmailAndPasswordStatus == Status.failure) {
             // Display an error message to the user

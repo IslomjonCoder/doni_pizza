@@ -1,8 +1,6 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:doni_pizza/business_logic/auth_bloc.dart';
-import 'package:doni_pizza/business_logic/auth_event.dart';
-import 'package:doni_pizza/business_logic/auth_state.dart';
+import 'package:doni_pizza/business_logic/blocs/auth_bloc/auth_bloc.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:doni_pizza/presentation/ui/auth_screen/register_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -32,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<AuthBloc, AuthState>(
+      body: BlocListener<AuthBloc, AuthUserState>(
         listener: (context, state) {
           if (state.signInWithGoogleStatus == Status.success) {
             TLoggerHelper.info("Success");
@@ -99,14 +97,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: TextStyle(
                           color: Colors.black, fontFamily: 'Sora', fontWeight: FontWeight.bold),
                     ),
-                    icon: BlocConsumer<AuthBloc, AuthState>(builder: (context, state) {
+                    icon: BlocConsumer<AuthBloc, AuthUserState>(builder: (context, state) {
                       if (state.signInWithGoogleStatus == Status.loading) {
                         return const SizedBox.square(
                             dimension: TSizes.sm,
                             child: CircularProgressIndicator(color: AppColors.black));
                       }
                       return SvgPicture.asset(AppImages.google);
-                    }, listener: (BuildContext context, AuthState state) {
+                    }, listener: (BuildContext context, AuthUserState state) {
                       if (state.error != null) {
                         TDialog.showAlert(context: context, message: state.error!);
                       }

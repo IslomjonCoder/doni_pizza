@@ -1,10 +1,8 @@
-import 'package:doni_pizza/data/models/user_model.dart';
-import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+part of 'auth_bloc.dart';
 
 enum Status { initial, loading, success, failure }
 
-class AuthState extends Equatable {
+class AuthUserState extends Equatable {
   final User? user;
   final UserModel? userModel;
   final String? error;
@@ -13,7 +11,7 @@ class AuthState extends Equatable {
   final Status registerWithEmailAndPasswordStatus;
   final Status userDataUpdateStatus;
 
-  const AuthState({
+  const AuthUserState({
     this.user,
     this.userModel,
     this.error,
@@ -23,7 +21,7 @@ class AuthState extends Equatable {
     this.userDataUpdateStatus = Status.initial,
   });
 
-  AuthState copyWith({
+  AuthUserState copyWith({
     User? user,
     UserModel? userModel,
     String? error,
@@ -32,7 +30,7 @@ class AuthState extends Equatable {
     Status? registerWithEmailAndPasswordStatus,
     Status? userDataUpdateStatus,
   }) {
-    return AuthState(
+    return AuthUserState(
       user: user ?? this.user,
       error: error ?? this.error,
       userModel: userModel ?? this.userModel,

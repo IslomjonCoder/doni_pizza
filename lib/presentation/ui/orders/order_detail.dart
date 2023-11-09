@@ -53,38 +53,13 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
           items: widget.foodItems,
           totalPrice: calculateTotalPrice(),
           phone: _selectedRecipient == OrderRecipient.me
-              ? userModel.phoneNumber
+              ? context.read<AuthCubit>().state.userModel!.phoneNumber
               : recipientPhoneController.text.trim(),
           paymentMethod: _selectedPaymentMethod,
           address: addressController.text,
-          name: userModel.name,
+          name: context.read<AuthCubit>().state.userModel!.name,
         );
         context.read<OrderRemoteBloc>().add(CreateOrderEvent(order));
-      }
-
-      if (userModel == null) {
-        if (!context.mounted) return;
-        final result = await showEditProfileDialog(context);
-        if (!context.mounted) return;
-        if (result != null) {
-          final name = result['name'] ?? '';
-          final phoneNumber = result['phoneNumber'] ?? '';
-          final order = OrderModel(
-            timestamp: DateTime.now(),
-            status: OrderStatus.pending,
-            id: UidGenerator.generateUID(),
-            userId: context.read<AuthCubit>().state.user?.uid ?? '',
-            items: widget.foodItems,
-            totalPrice: calculateTotalPrice(),
-            phone: _selectedRecipient == OrderRecipient.me
-                ? phoneNumber
-                : recipientPhoneController.text.trim(),
-            paymentMethod: _selectedPaymentMethod,
-            address: addressController.text,
-            name: name,
-          );
-          context.read<OrderRemoteBloc>().add(CreateOrderEvent(order));
-        }
       }
     }
   }
@@ -109,14 +84,15 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
         ),
       ),
       body: BlocListener<OrderRemoteBloc, OrderRemoteState>(
-        listener: (context, state) {
+        listener: (context, state)async {
           if (state is OrderCreatedState|| state is OrdersFetchedState) {
             Fluttertoast.showToast(
               msg: LocaleKeys.orderCreated.tr(),
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
+              backgroundColor: Colors.white,
+              textColor: Colors.black,
             );
             context.read<FoodBloc>().add(ClearCartEvent());
             context.read<TabCubit>().changeTab(0);
@@ -135,12 +111,10 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.red,
             );
-          } else if (state is OrderRemoteLoading) {
-            loadingDialog(context);
           }
         },
         child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           child: Form(
             key: _formKey,
             child: Column(
@@ -255,8 +229,8 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
-                          child: showLottie
-                              ? const CupertinoActivityIndicator()
+                          child: context.watch<OrderRemoteBloc>().state is OrderRemoteLoading?
+                               const CupertinoActivityIndicator(radius: 15,color: Colors.black,)
                               : Text(LocaleKeys.confirmOrder.tr()),
                         ),
                       ),
@@ -276,81 +250,9 @@ Future<dynamic> loadingDialog(BuildContext context) {
   return showDialog(
       context: context,
       builder: (context) {
-        return const Center(child: CircularProgressIndicator());
+        return const Center(child: CupertinoActivityIndicator());
       },
       barrierDismissible: true);
 }
 
 enum OrderRecipient { me, lovedOne }
-
-Future<Map<String, String>?> showEditProfileDialog(BuildContext context) async {
-  final result = await showDialog<Map<String, String>?>(
-    context: context,
-    builder: (BuildContext context) {
-      final result = {
-        'name': '',
-        'phoneNumber': '',
-      };
-
-      return AlertDialog(
-        title: Text(LocaleKeys.editProfile.tr()),
-        backgroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(16),
-          ),
-        ),
-        contentPadding: const EdgeInsets.all(16),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: LocaleKeys.name.tr(),
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return LocaleKeys.mandatory.tr();
-                }
-                return null;
-              },
-              onChanged: (value) {
-                result['name'] = value;
-              },
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: LocaleKeys.phone_number.tr(),
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return LocaleKeys.phone_number.tr();
-                }
-                return null;
-              },
-              onChanged: (value) {
-                result['phoneNumber'] = value;
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, null);
-            },
-            child: Text(LocaleKeys.cancel.tr()),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, result);
-            },
-            child: Text(LocaleKeys.ok.tr()),
-          ),
-        ],
-      );
-    },
-  );
-
-  return result;
-}

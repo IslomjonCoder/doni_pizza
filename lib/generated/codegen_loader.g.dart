@@ -84,7 +84,10 @@ class CodegenLoader extends AssetLoader {
     "cancel": "Отмена",
     "sure_to_clear_cart": "Вы уверены, что хотите очистить корзину?",
     "current_orders": "Текущие",
-    "all_orders": "Все"
+    "all_orders": "Все",
+    "you_cant_order" : "Вы не можете заказать сейчас",
+    "sure_to_clear_orders": "Вы уверены, что хотите очистить заказы?",
+    "sure_to_logout": "Вы уверены, что хотите выйти?",
   };
   static const Map<String, dynamic> en = {
     "login_desc": "Sign in to place an order through the app 👇🏻",
@@ -156,6 +159,9 @@ class CodegenLoader extends AssetLoader {
     "sure_to_clear_cart": "Are you sure you want to clear the cart?",
     "current_orders": "Current",
     "all_orders": "All",
+    "you_cant_order" : "You can't order now",
+    "sure_to_clear_orders": "Are you sure you want to clear the orders?",
+    "sure_to_logout": "Are you sure you want to log out?",
   };
   static const Map<String, dynamic> uz = {
     "login_desc":
@@ -230,6 +236,9 @@ class CodegenLoader extends AssetLoader {
     "sure_to_clear_cart": "Savatni tozalashni xohlaysizmi?",
     "current_orders": "Hozirgi",
     "all_orders": "Barchasi",
+    "you_cant_order" : "Xozirda siz buyurtma qila olmaysiz!",
+    "sure_to_clear_orders": "Buyurtmalarni tozalashni xohlaysizmi?",
+    "sure_to_clear_profile": "Profilni tozalashni xohlaysizmi?",
   };
   static const Map<String, Map<String, dynamic>> mapLocales = {
     "ru": ru,

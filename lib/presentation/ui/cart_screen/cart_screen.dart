@@ -1,5 +1,8 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
+import 'package:doni_pizza/business_logic/blocs/order_bloc/order_remote_bloc.dart';
+import 'package:doni_pizza/utils/constants/enums.dart';
 import 'package:doni_pizza/utils/device/device_utility.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +73,10 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  bool isButtonEnabled = true;
+  Duration buttonCooldown = Duration(seconds: 10);
+
+
   @override
   Widget build(BuildContext context) {
     final foodBloc = context.read<FoodBloc>();
@@ -136,12 +143,17 @@ class _CartScreenState extends State<CartScreen> {
                 : Column(
                     children: [
                       Expanded(
-                        child: ListView.builder(
+                        child: ListView.separated(
                           physics: const BouncingScrollPhysics(),
                           itemCount: state.foods.length,
                           itemBuilder: (context, index) {
                             final item = state.foods[index];
                             return ListTile(
+                              leading: SizedBox(
+                                child: CachedNetworkImage(imageUrl: item.food.imageUrl),
+                                width: 100,
+                                height: 100,
+                              ),
                               title: Text(
                                 item.food.name,
                                 style: AppStyles.itemTitle,
@@ -189,38 +201,95 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             );
                           },
+                          separatorBuilder: (BuildContext context, int index) => const Divider(),
                         ),
                       ),
                       if (state.foods.isNotEmpty)
-                        ZoomTapAnimation(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => OrderDetailScreen(
-                                  foodItems: state.foods,
+                        BlocBuilder<OrderRemoteBloc, OrderRemoteState>(
+                          builder: (context, stateOrder) {
+                            if (stateOrder is OrdersFetchedState) {
+                              final orders = stateOrder.orders
+                                  .where((element) =>
+                                      element.status != OrderStatus.delivered ||
+                                      element.status != OrderStatus.canceled)
+                                  .toList();
+                              final empty = orders.isEmpty;
+                              return GestureDetector(
+                                onTap: () {
+                                  if (isButtonEnabled) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => OrderDetailScreen(
+                                          foodItems: state.foods,
+                                        ),
+                                      ),
+                                    );
+                                    setState(() {
+                                      isButtonEnabled = false;
+                                    });
+                                    // Enable the button after the cooldown duration
+                                    Future.delayed(buttonCooldown, () {
+                                      setState(() {
+                                        isButtonEnabled = true;
+                                      });
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.all(16.0),
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    color: isButtonEnabled ? Colors.black : Colors.grey, // Change color if button is disabled
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: AppSizes.verticalPadding * 3,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        isButtonEnabled
+                                            ? "${LocaleKeys.orderNow.tr()} / ${state.totalValue} ${LocaleKeys.usd.tr()}"
+                                            : "Pizza", // Display "Pizza" when button is disabled
+                                        style: AppStyles.orderButton,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                            return ZoomTapAnimation(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => OrderDetailScreen(
+                                      foodItems: state.foods,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.all(16.0),
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  color: Colors.black,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: AppSizes.verticalPadding * 3),
+                                  child: Center(
+                                    child: Text(
+                                      "${LocaleKeys.orderNow.tr()} / ${state.totalValue} ${LocaleKeys.usd.tr()}",
+                                      style: AppStyles.orderButton, // Adjusted size
+                                    ),
+                                  ),
                                 ),
                               ),
                             );
                           },
-                          child: Container(
-                            margin: const EdgeInsets.all(16.0),
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: Colors.black,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: AppSizes.verticalPadding * 3),
-                              child: Center(
-                                child: Text(
-                                  "${LocaleKeys.orderNow.tr()} / ${state.totalValue} ${LocaleKeys.usd.tr()}",
-                                  style: AppStyles.orderButton, // Adjusted size
-                                ),
-                              ),
-                            ),
-                          ),
                         ),
                       Gap(TDevice.getBottomNavigationBarHeight() * 1.5)
                     ],
