@@ -36,10 +36,6 @@ class Promotions extends StatelessWidget {
                       imageUrl: state.promotions[index].imageUrl,
                       fit: BoxFit.fitWidth,
                     ))
-                // SetOfDoniPizza(image: AppImages.dostavka,),
-                // SetOfDoniPizza(image: AppImages.juftlik,),
-                // SetOfDoniPizza(image: AppImages.dostlar,),
-                // SetOfDoniPizza(image: AppImages.burger,),
               ]);
         }
         return CarouselSlider(
