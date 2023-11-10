@@ -96,6 +96,73 @@ class _HomeScreenState extends State<HomeScreen> {
         scrolledUnderElevation: 0,
         toolbarHeight: 80,
         backgroundColor: Colors.white,
+
+        bottom: PreferredSize(preferredSize: Size(double.infinity, 50), child:  Column(
+          children: [
+            SizedBox(
+              height: 50,
+              child: BlocBuilder<CategoryCubit, List<CategoryModel>>(
+                builder: (context, state) {
+                  return ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
+                    // shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      final category = state[index];
+                      return GestureDetector(
+                        onTap: () {
+                          final all = context.read<CategoryIndexCubit>().state == index;
+                          context.read<CategoryIndexCubit>().changeCategory(all ? -1 : index);
+                          all
+                              ? context.read<FoodBlocRemote>().add(GetAll())
+                              : context
+                              .read<FoodBlocRemote>()
+                              .add(GetFoodsByCategory(category.id!));
+                        },
+                        child: Card(
+                          shadowColor: Colors.black,
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: BorderSide(
+                                color: context.read<CategoryIndexCubit>().state == index
+                                    ? Colors.black
+                                    : Colors.transparent),
+                          ),
+                          color: context.watch<CategoryIndexCubit>().state == index
+                              ? Colors.black
+                              : Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(
+                              category.name,
+                              style: TextStyle(
+                                  color: context.watch<CategoryIndexCubit>().state == index
+                                      ? Colors.white
+                                      : Colors.black),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(width: TSizes.sm);
+                    },
+                    itemCount: state.length,
+                  );
+
+                  /*return Categories(
+                        imageUrls: state.map((e) => e.imageUrl).toList(),
+                        categoryText: state.map((e) => e.name).toList(),
+                        onSelectedCategory: updateCategory,
+                        imagePaths: const [],
+                      );*/
+                },
+              ),
+            ),
+            Gap(10)
+          ],
+        ),),
         title: isSearching
             ? GlobalTextField(
                 hintText: LocaleKeys.search.tr(),
@@ -152,68 +219,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 50,
-              child: BlocBuilder<CategoryCubit, List<CategoryModel>>(
-                builder: (context, state) {
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-                    // shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final category = state[index];
-                      return GestureDetector(
-                        onTap: () {
-                          final all = context.read<CategoryIndexCubit>().state == index;
-                          context.read<CategoryIndexCubit>().changeCategory(all ? -1 : index);
-                          all
-                              ? context.read<FoodBlocRemote>().add(GetAll())
-                              : context
-                                  .read<FoodBlocRemote>()
-                                  .add(GetFoodsByCategory(category.id!));
-                        },
-                        child: Card(
-                          shadowColor: Colors.black,
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
-                                color: context.read<CategoryIndexCubit>().state == index
-                                    ? Colors.black
-                                    : Colors.transparent),
-                          ),
-                          color: context.watch<CategoryIndexCubit>().state == index
-                              ? Colors.black
-                              : Colors.white,
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              category.name,
-                              style: TextStyle(
-                                  color: context.watch<CategoryIndexCubit>().state == index
-                                      ? Colors.white
-                                      : Colors.black),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(width: TSizes.sm);
-                    },
-                    itemCount: state.length,
-                  );
 
-                  /*return Categories(
-                    imageUrls: state.map((e) => e.imageUrl).toList(),
-                    categoryText: state.map((e) => e.name).toList(),
-                    onSelectedCategory: updateCategory,
-                    imagePaths: const [],
-                  );*/
-                },
-              ),
-            ),
-            const Gap(10),
+            // const Gap(10),
             const Promotions(),
             // const Gap(TSizes.md),
             // BlocBuilder<PromotionBloc, PromotionState>(

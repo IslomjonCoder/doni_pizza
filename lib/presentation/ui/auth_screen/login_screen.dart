@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                     height: 143,
                     child: Center(
-                      child: Text(TTexts.login,
+                      child: Text(LocaleKeys.login.tr(),
                           style: TFonts.titleScreen.copyWith(color: Colors.white)),
                     )),
                 const Gap(TSizes.md),
@@ -90,8 +90,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         context.read<AuthBloc>().add(GoogleLoginEvent());
                       }
                     },
-                    label: const Text(
-                      TTexts.loginWithGoogle,
+                    label:  Text(
+                      LocaleKeys.continue_with_google.tr(),
                       style: TextStyle(
                           color: Colors.black, fontFamily: 'Sora', fontWeight: FontWeight.bold),
                     ),
@@ -135,6 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const Gap(TSizes.md),
                 RichText(
+                  textAlign: TextAlign.center,
                     text: TextSpan(
                         text: LocaleKeys.do_not_have_an_account.tr(),
                         style: const TextStyle(
