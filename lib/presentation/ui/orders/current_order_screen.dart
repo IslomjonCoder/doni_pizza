@@ -67,7 +67,7 @@ class _CurrentOrderScreenState extends State<CurrentOrderScreen> {
                         child: Column(
                           children: [
                             Text(
-                              "Yetkaziladigan vaqt: ${getCurrentTime(currentOrder.first.timestamp)} - ${getFutureTime(currentOrder.first.timestamp.add(Duration(minutes: 40)))}",
+                              "${LocaleKeys.deliveryTime.tr()} ${getCurrentTime(currentOrder.first.timestamp)} - ${getFutureTime(currentOrder.first.timestamp.add(Duration(minutes: 40)))}",
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Sora',
@@ -75,8 +75,9 @@ class _CurrentOrderScreenState extends State<CurrentOrderScreen> {
                                 fontSize: 20,
                               ),
                             ),
-                            const Text(
-                              "Buyurtmani Doni Pizza tomonidan tasdiqlash 3-5 daqiqa vaqt oladi.",
+                             Text(
+                              LocaleKeys.currentOrder.tr(),
+                              // "Buyurtmani Doni Pizza tomonidan tasdiqlash 3-5 daqiqa vaqt oladi.",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: 'Sora',
