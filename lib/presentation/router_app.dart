@@ -1,8 +1,5 @@
-import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/order_bloc/order_remote_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
-import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
-import 'package:doni_pizza/business_logic/cubits/user_data_cubit.dart';
 import 'package:doni_pizza/data/database/user_service_hive.dart';
 import 'package:doni_pizza/data/models/user_model.dart';
 import 'package:doni_pizza/data/repositories/user_repo.dart';

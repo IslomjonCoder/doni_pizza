@@ -1,4 +1,4 @@
-package uz.doni.pizza
+package uz.pizza.doni
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -89,7 +89,7 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
     on<DeleteFood>(_handleDeleteFood);
     on<IncrementCountEvent>(_handleIncrementCountEvent);
     on<DecrementCountEvent>(_handleDecrementCountEvent);
-    // on<ClearCartEvent>(_handleClearCartEvent);
+    on<ClearCartEvent>(_handleClearCartEvent);
   }
 
   void _handleLoadTodosEvent(LoadTodosEvent event, Emitter<FoodState> emit) async {
@@ -116,7 +116,7 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
   Future<void> _handleDeleteFoods(DeleteFoods event, Emitter<FoodState> emit) async {
     try {
       // Clear the cart in Hive (delete all food items)
-      await hiveDatabase.clearAllFoodIctems();
+      await hiveDatabase.clearAllFoodItems();
       final orderItems = await hiveDatabase.getAllOrderItems();
       emit(FoodLoadedState(orderItems));
     } catch (e) {
@@ -160,13 +160,13 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
     }
   }
 
-  // Future<void> _handleClearCartEvent(ClearCartEvent event, Emitter<FoodState> emit) async {
-  //   try {
-  //     // Clear the cart in Hive (delete all food items)
-  //     await hiveDatabase.clearAllBoxes();
-  //     emit(FoodLoadedState([]));
-  //   } catch (e) {
-  //     emit(FoodErrorState('Failed to clear cart'));
-  //   }
-  // }
+  Future<void> _handleClearCartEvent(ClearCartEvent event, Emitter<FoodState> emit) async {
+    try {
+      // Clear the cart in Hive (delete all food items)
+      await hiveDatabase.clearAllFoodItems();
+      emit(FoodLoadedState([]));
+    } catch (e) {
+      emit(FoodErrorState('Failed to clear cart'));
+    }
+  }
 }

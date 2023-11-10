@@ -72,6 +72,8 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
           name: context.read<AuthCubit>().state.userModel!.name,
         );
         context.read<OrderRemoteBloc>().add(CreateOrderEvent(order));
+        context.read<FoodBloc>().add(ClearCartEvent());
+        context.read<TabCubit>().changeTab(2);
       }
       else{
         print('no user');
@@ -92,7 +94,8 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
           name: userModel.name,
         );
         context.read<OrderRemoteBloc>().add(CreateOrderEvent(order));
-
+        context.read<FoodBloc>().add(ClearCartEvent());
+        context.read<TabCubit>().changeTab(2);
       }
       print('done');
     }

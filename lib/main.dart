@@ -21,7 +21,6 @@ import 'package:doni_pizza/data/repositories/promotion_repo.dart';
 import 'package:doni_pizza/data/repositories/user_repo.dart';
 import 'package:doni_pizza/firebase_options.dart';
 import 'package:doni_pizza/generated/codegen_loader.g.dart';
-import 'package:doni_pizza/presentation/ui/auth_screen/register_screen.dart';
 import 'package:doni_pizza/presentation/ui/splash_screen/splash_screen.dart';
 import 'package:doni_pizza/utils/colors.dart';
 import 'package:easy_localization/easy_localization.dart';

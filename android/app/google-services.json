@@ -154,10 +154,78 @@
           }
         },
         {
+          "client_id": "740038564434-bvq5t9n4vqf6q0lflbtj0kq9svbs2ofd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uz.doni.pizza",
+            "certificate_hash": "fc850d0a5fd5d2f885db9d7f49b69c38d7783889"
+          }
+        },
+        {
           "client_id": "740038564434-iecdlb6i28bbovnbqrrk6ne714fa5kcm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "uz.doni.pizza",
+            "certificate_hash": "80db0d7926992471d6b7fc111392ccc6def3579f"
+          }
+        },
+        {
+          "client_id": "740038564434-0d11r4kl74g87r79g63g6cgddmu1nus1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBb4oBD3ErJIY_JbvSzmgKvZ1NL3v-hu5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "740038564434-0d11r4kl74g87r79g63g6cgddmu1nus1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "740038564434-fmfah2lrbp301phl5fft5dtivud20btg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.doniPizzaAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:740038564434:android:6405069b2f17d806645d8b",
+        "android_client_info": {
+          "package_name": "uz.pizza.doni"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "740038564434-frpdqooom5v56l7e1g3hje87b06o66vp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uz.pizza.doni",
+            "certificate_hash": "6255238bfaba1f7460ea5ce5c34d41a0e144c98e"
+          }
+        },
+        {
+          "client_id": "740038564434-o8cchqv248r39e0n6udgd6abgpbsua4q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uz.pizza.doni",
+            "certificate_hash": "fc850d0a5fd5d2f885db9d7f49b69c38d7783889"
+          }
+        },
+        {
+          "client_id": "740038564434-r13bppko2bl3fo2ovb63sq7iqtqq0iq1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uz.pizza.doni",
             "certificate_hash": "80db0d7926992471d6b7fc111392ccc6def3579f"
           }
         },

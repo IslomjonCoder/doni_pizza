@@ -1,5 +1,4 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doni_pizza/business_logic/blocs/auth_bloc/auth_bloc.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:doni_pizza/presentation/ui/auth_screen/register_screen.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:doni_pizza/utils/colors.dart';
 import 'package:doni_pizza/utils/constants/sizes.dart';
-import 'package:doni_pizza/utils/constants/texts.dart';
 import 'package:doni_pizza/utils/dialogs/snackbar_dialogs.dart';
 import 'package:doni_pizza/utils/fonts/fonts.dart';
 import 'package:doni_pizza/utils/icons.dart';
@@ -54,8 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
           image: DecorationImage(
               fit: BoxFit.cover,
               alignment: Alignment.center,
-              image: CachedNetworkImageProvider(
-                  'https://images.unsplash.com/photo-1520201163981-8cc95007dd2a?q=80&w=2736&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'))),
+              image: AssetImage(AppImages.auth))),
       child: Container(
         decoration: BoxDecoration(color: Colors.black.withOpacity(0.6)),
         child: SingleChildScrollView(

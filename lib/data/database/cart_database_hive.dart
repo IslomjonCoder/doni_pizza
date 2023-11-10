@@ -60,7 +60,7 @@ class CartHiveDatabase {
     await Hive.deleteBoxFromDisk('orderItems');
   }
 
-  clearAllFoodIctems() async {
+  clearAllFoodItems() async {
     final box = await Hive.openBox<FoodItem>('foodItems');
     await box.clear();
   }

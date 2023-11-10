@@ -3,6 +3,7 @@ class AppImages {
   static const String pizza = "assets/images/pizza.png";
   static const String splashImage = 'assets/images/splash.JPG';
   static const String promotionImage = 'assets/images/promotionImage.png';
+  static const String auth = 'assets/images/auth.png';
 
   //svg
   static const String search = 'assets/svg/search.svg';
