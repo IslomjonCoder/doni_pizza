@@ -75,5 +75,7 @@ abstract class LocaleKeys {
   static const error = "error";
   static const orderCreated = "order_created";
   static const youCantOrder = "you_cant_order";
+  static const currentOrder = 'current_order';
+  static const deliveryTime = 'delivery_time';
 
 }

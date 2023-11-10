@@ -25,6 +25,7 @@ class AuthRepository {
           .collection('users')
           .where('email', isEqualTo: googleUser.email)
           .get();
+      print(userExist.docs.isEmpty);
       if (userExist.docs.isNotEmpty) {
         final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
         final AuthCredential credential = GoogleAuthProvider.credential(

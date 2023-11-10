@@ -94,7 +94,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                     height: 143,
                     child: Center(
-                      child: Text(TTexts.register,
+                      child: Text(LocaleKeys.signUp.tr(),
                           style: TFonts.titleScreen.copyWith(color: AppColors.white)),
                     )),
                 Column(

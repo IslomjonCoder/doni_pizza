@@ -1,3 +1,4 @@
+import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/order_bloc/order_remote_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
@@ -24,6 +25,7 @@ class RouterApp extends StatelessWidget {
         }
       },
       listener: (BuildContext context, AuthState state) async {
+        print('state changed');
         if (state.status == AuthStateEnum.authenticated) {
           context.read<OrderRemoteBloc>().init(state.user!.uid);
           final user = await UserRepository().getUserInfo();
@@ -31,8 +33,10 @@ class RouterApp extends StatelessWidget {
         }
         else{
           context.read<TabCubit>().changeTab(0);
-          context.read<UserDataCubit>().clear();
-          context.read<AuthCubit>().clearAll();
+          context.read<FoodBloc>().add(ClearCartEvent());
+
+          // context.read<UserDataCubit>().clear();
+          // context.read<AuthCubit>().clearAll();
         }
         Navigator.pushAndRemoveUntil(
           context,
