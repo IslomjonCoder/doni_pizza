@@ -17,6 +17,10 @@ class RouterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
+      buildWhen: (previous, current) =>
+          previous.status != current.status ,
+      listenWhen: (previous, current) =>
+      previous.status != current.status ,
       builder: (context, state) {
         if (state.status == AuthStateEnum.unauthenticated) {
           return const LoginScreen();
@@ -31,13 +35,7 @@ class RouterApp extends StatelessWidget {
           final user = await UserRepository().getUserInfo();
           context.read<AuthCubit>().updateUserModel(user);
         }
-        else{
-          context.read<TabCubit>().changeTab(0);
-          context.read<FoodBloc>().add(ClearCartEvent());
 
-          // context.read<UserDataCubit>().clear();
-          // context.read<AuthCubit>().clearAll();
-        }
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(

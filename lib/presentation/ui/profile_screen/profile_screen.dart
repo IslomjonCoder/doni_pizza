@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
@@ -89,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(3.0),
+                padding: const EdgeInsets.all(2.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
                   color: selectedImagePath == null ? Colors.grey.shade400 : Colors.black,
@@ -116,13 +117,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       )
-                    : const Padding(
-                        padding: EdgeInsets.all(40.0),
-                        child: Icon(
-                          CupertinoIcons.camera,
-                          color: Colors.white,
-                        ),
-                      ),
+                    :  AvatarImage(
+                      child: Text(context.read<AuthCubit>().state.userModel?.name.substring(0,1).toUpperCase()??'',style: TextStyle(fontSize: 30,fontFamily: 'Sora',fontWeight: FontWeight.w900,),),
+                  size: 80,
+                    ),
               ),
             ),
             Column(

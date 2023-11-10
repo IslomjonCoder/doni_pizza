@@ -146,6 +146,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "740038564434-7tt1b5cq0o29387dnpiu237hc98smfh7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uz.doni.pizza",
+            "certificate_hash": "6255238bfaba1f7460ea5ce5c34d41a0e144c98e"
+          }
+        },
+        {
+          "client_id": "740038564434-iecdlb6i28bbovnbqrrk6ne714fa5kcm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uz.doni.pizza",
+            "certificate_hash": "80db0d7926992471d6b7fc111392ccc6def3579f"
+          }
+        },
+        {
           "client_id": "740038564434-0d11r4kl74g87r79g63g6cgddmu1nus1.apps.googleusercontent.com",
           "client_type": 3
         }
