@@ -84,7 +84,10 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
                 return const Center(child: CircularProgressIndicator(color: Colors.black));
               } else if (state is OrdersFetchedState) {
                 final successOrders = state.orders
-                    .where((element) => element.status == OrderStatus.delivered && element.userId == context.read<AuthCubit>().state.user?.uid|| element.status == OrderStatus.canceled)
+                    .where((element) =>
+                        element.status == OrderStatus.delivered &&
+                            element.userId == context.read<AuthCubit>().state.user?.uid ||
+                        element.status == OrderStatus.canceled)
                     .toList();
                 return successOrders.isEmpty
                     ? Center(child: Text(LocaleKeys.noOrder.tr()))
@@ -108,9 +111,21 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            trailing: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            trailing: Card(
+                              color:
+                                  order.status == OrderStatus.delivered ? Colors.green : Colors.red,
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(
+                                  order.status.name.capitalizeFirst(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   '${order.totalPrice} ${LocaleKeys.usd.tr()}',
@@ -118,31 +133,17 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
                                     color: Colors.indigo,
                                     fontFamily: 'Sora',
                                   ),
-                                ), Card(
-                                  color: order.status == OrderStatus.delivered
-                                      ? Colors.green
-                                      : Colors.red,
-
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      order.status.name.capitalizeFirst(),
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${LocaleKeys.ordered_at.tr()}: $formattedTimestamp',
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        color: Colors.grey,
+                                        fontFamily: 'Sora',
                                       ),
                                     ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            subtitle: Row(
-                              children: [
-                                Text(
-                                  '${LocaleKeys.ordered_at.tr()}: $formattedTimestamp',
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontFamily: 'Sora',
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),

@@ -1,7 +1,7 @@
 name: doni_pizza
 description: A new Flutter project.
 publish_to: 'none'
-version: 0.1.0
+version: 1.1.0+2
 
 environment:
   sdk: '>=3.1.5 <4.0.0'
@@ -54,7 +54,7 @@ flutter:
   assets:
     - assets/images/
     - assets/svg/
-    - assets/translations/
+#    - assets/translations/
 
 
   fonts:

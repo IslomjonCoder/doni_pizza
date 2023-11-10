@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBb4oBD3ErJIY_JbvSzmgKvZ1NL3v-hu5s',
-    appId: '1:740038564434:android:f3e68f78555c6487645d8b',
+    appId: '1:740038564434:android:049f56fbc7065ed5645d8b',
     messagingSenderId: '740038564434',
     projectId: 'doni-pizza',
     storageBucket: 'doni-pizza.appspot.com',

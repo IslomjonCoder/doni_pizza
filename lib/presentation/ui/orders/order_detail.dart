@@ -5,6 +5,8 @@ import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
 import 'package:doni_pizza/data/database/user_service_hive.dart';
 import 'package:doni_pizza/data/models/order_item.dart';
 import 'package:doni_pizza/data/models/order_model.dart';
+import 'package:doni_pizza/data/models/user_model.dart';
+import 'package:doni_pizza/data/repositories/user_repo.dart';
 import 'package:doni_pizza/generated/locale_keys.g.dart';
 import 'package:doni_pizza/presentation/ui/tab_box/tab_box.dart';
 import 'package:doni_pizza/presentation/widgets/global_textfield.dart';
@@ -42,8 +44,18 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
 
   Future<void> placeOrder() async {
     if (_formKey.currentState!.validate()) {
-      final userModel = await HiveService.getUserModelFromHive();
+      print('valid');
+       UserModel? userModel;
+      try{
+        final userModel1 = await HiveService.getUserModelFromHive();
+        userModel = userModel1;
+      }catch(e){
+        print(e.toString());
+      }
+
       if (userModel != null) {
+
+        print(userModel.name);
         if (!context.mounted) return;
         final order = OrderModel(
           timestamp: DateTime.now(),
@@ -61,6 +73,28 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
         );
         context.read<OrderRemoteBloc>().add(CreateOrderEvent(order));
       }
+      else{
+        print('no user');
+        final userModel = await UserRepository().getUserInfo();
+        HiveService.saveUserModelToHive(userModel!);
+        final order = OrderModel(
+          timestamp: DateTime.now(),
+          status: OrderStatus.pending,
+          id: UidGenerator.generateUID(),
+          userId: context.read<AuthCubit>().state.user?.uid ?? '',
+          items: widget.foodItems,
+          totalPrice: calculateTotalPrice(),
+          phone: _selectedRecipient == OrderRecipient.me
+              ? userModel.phoneNumber
+              : recipientPhoneController.text.trim(),
+          paymentMethod: _selectedPaymentMethod,
+          address: addressController.text,
+          name: userModel.name,
+        );
+        context.read<OrderRemoteBloc>().add(CreateOrderEvent(order));
+
+      }
+      print('done');
     }
   }
 
@@ -95,7 +129,7 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
               textColor: Colors.black,
             );
             context.read<FoodBloc>().add(ClearCartEvent());
-            context.read<TabCubit>().changeTab(0);
+            context.read<TabCubit>().changeTab(2);
             Navigator.pop(context);
             Navigator.pushAndRemoveUntil(
                 context,
