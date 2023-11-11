@@ -124,7 +124,7 @@ class _CartScreenState extends State<CartScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SvgPicture.asset(AppImages.emptyCart),
-                        const SizedBox(height: AppSizes.verticalPadding * 6), // Adjusted size
+                        const SizedBox(height: AppSizes.verticalPadding * 6),
                         Text(LocaleKeys.emptyCart.tr(),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
@@ -198,7 +198,7 @@ class _CartScreenState extends State<CartScreen> {
                           separatorBuilder: (BuildContext context, int index) => const Divider(),
                         ),
                       ),
-                      if (state.foods.isNotEmpty)
+
                         ZoomTapAnimation(
                           onTap: () {
                             Navigator.push(

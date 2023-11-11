@@ -61,7 +61,7 @@ class CartHiveDatabase {
   }
 
   clearAllFoodItems() async {
-    final box = await Hive.openBox<FoodItem>('foodItems');
+    final box = await Hive.openBox<OrderItem>('orderItems');
     await box.clear();
   }
 }

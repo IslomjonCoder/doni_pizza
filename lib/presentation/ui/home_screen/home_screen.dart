@@ -1,11 +1,10 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doni_pizza/business_logic/blocs/cart_bloc/state_bloc.dart';
 import 'package:doni_pizza/business_logic/blocs/food_bloc/food_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/category_cubit/category_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/category_index_cubit/category_index_cubit.dart';
 import 'package:doni_pizza/data/models/category_model.dart';
-import 'package:doni_pizza/data/models/food_model.dart';
-import 'package:doni_pizza/utils/constants/constants.dart';
 import 'package:doni_pizza/utils/constants/sizes.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -27,142 +26,87 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<FoodItem> allMenuItems = foodItems;
-
   bool isSearching = false;
-
-  String selectedCategory = 'All';
-
-  List<FoodItem> filteredFoods = [];
 
   TextEditingController searchController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    filteredFoods = List.from(allMenuItems);
-  }
-
-  void filterFoods(String query) {
-    query = query.toLowerCase();
-    setState(() {
-      if (!isSearching) {
-        searchController.clear();
-        filteredFoods = List.from(allMenuItems);
-      } else {
-        filteredFoods = allMenuItems.where((food) {
-          final name = food.name.toLowerCase();
-          final description = food.description.toLowerCase();
-          return name.contains(query) || description.contains(query);
-        }).toList();
-      }
-    });
-  }
-
-
-
-  // final colors = <Color>[
-  //   Colors.red,
-  //   Colors.green,
-  //   Colors.blue,
-  // ];
-
-  @override
   Widget build(BuildContext context) {
+    final currentTime = DateTime.now();
+
+    // Todo fix this
+    final isOnline =
+        (currentTime.hour <= 9 && (currentTime.hour >= 1 || currentTime.minute <= 30));
+
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //     onPressed: () async {
-      //       print('Started');
-      //       final promotion = Promotion(
-      //         id: '2',
-      //         title: 'Limited Time Deal',
-      //         description: 'Try our new menu items with exclusive discounts.',
-      //         imageUrl: 'https://example.com/promotion2.jpg',
-      //       );
-      //
-      //       final image = await THelperFunctions.getImageFromGallery();
-      //       if (image != null) {
-      //         if (!context.mounted) return;
-      //         context.read<PromotionBloc>().add(UpdatePromotion(promotion, image));
-      //       }
-      //       print('Ended');
-      //     },
-      //     child: const Text("GO")),
       backgroundColor: Colors.white,
       appBar: AppBar(
-        // automaticallyImplyLeading: false,
         centerTitle: false,
         elevation: 0,
         scrolledUnderElevation: 0,
         toolbarHeight: 80,
         backgroundColor: Colors.white,
-
-        bottom: PreferredSize(preferredSize: Size(double.infinity, 50), child:  Column(
-          children: [
-            SizedBox(
-              height: 50,
-              child: BlocBuilder<CategoryCubit, List<CategoryModel>>(
-                builder: (context, state) {
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-                    // shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final category = state[index];
-                      return GestureDetector(
-                        onTap: () {
-                          final all = context.read<CategoryIndexCubit>().state == index;
-                          context.read<CategoryIndexCubit>().changeCategory(all ? -1 : index);
-                          all
-                              ? context.read<FoodBlocRemote>().add(GetAll())
-                              : context
-                              .read<FoodBlocRemote>()
-                              .add(GetFoodsByCategory(category.id!));
-                        },
-                        child: Card(
-                          shadowColor: Colors.black,
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
-                                color: context.read<CategoryIndexCubit>().state == index
-                                    ? Colors.black
-                                    : Colors.transparent),
-                          ),
-                          color: context.watch<CategoryIndexCubit>().state == index
-                              ? Colors.black
-                              : Colors.white,
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              category.name,
-                              style: TextStyle(
-                                  color: context.watch<CategoryIndexCubit>().state == index
-                                      ? Colors.white
-                                      : Colors.black),
+        bottom: PreferredSize(
+          preferredSize: const Size(double.infinity, 50),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 50,
+                child: BlocBuilder<CategoryCubit, List<CategoryModel>>(
+                  builder: (context, state) {
+                    return ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final category = state[index];
+                        return GestureDetector(
+                          onTap: () {
+                            final all = context.read<CategoryIndexCubit>().state == index;
+                            context.read<CategoryIndexCubit>().changeCategory(all ? -1 : index);
+                            all
+                                ? context.read<FoodBlocRemote>().add(GetAll())
+                                : context
+                                    .read<FoodBlocRemote>()
+                                    .add(GetFoodsByCategory(category.id!));
+                          },
+                          child: Card(
+                            shadowColor: Colors.black,
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              side: BorderSide(
+                                  color: context.read<CategoryIndexCubit>().state == index
+                                      ? Colors.black
+                                      : Colors.transparent),
+                            ),
+                            color: context.watch<CategoryIndexCubit>().state == index
+                                ? Colors.black
+                                : Colors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Text(
+                                category.name,
+                                style: TextStyle(
+                                    color: context.watch<CategoryIndexCubit>().state == index
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(width: TSizes.sm);
-                    },
-                    itemCount: state.length,
-                  );
-
-                  /*return Categories(
-                        imageUrls: state.map((e) => e.imageUrl).toList(),
-                        categoryText: state.map((e) => e.name).toList(),
-                        onSelectedCategory: updateCategory,
-                        imagePaths: const [],
-                      );*/
-                },
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(width: TSizes.sm);
+                      },
+                      itemCount: state.length,
+                    );
+                  },
+                ),
               ),
-            ),
-            Gap(10)
-          ],
-        ),),
+              const Gap(10)
+            ],
+          ),
+        ),
         title: isSearching
             ? GlobalTextField(
                 hintText: LocaleKeys.search.tr(),
@@ -219,36 +163,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             // const Gap(10),
             const Promotions(),
-            // const Gap(TSizes.md),
-            // BlocBuilder<PromotionBloc, PromotionState>(
-            //   builder: (context, state) {
-            //     if (state is PromotionLoading) {
-            //       return Shimmer.fromColors(
-            //         baseColor: Colors.grey[300]!,
-            //         highlightColor: Colors.grey[100]!,
-            //         child: Container(),
-            //       );
-            //     } else if (state is PromotionLoaded) {
-            //       return CarouselSlider(
-            //           options: CarouselOptions(height: 150, autoPlay: true),
-            //           items: state.promotions.map((promotion) {
-            //             return Container(
-            //                 margin: const EdgeInsets.symmetric(horizontal: 10),
-            //                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-            //                 child: CachedNetworkImage(
-            //                   imageUrl: promotion.imageUrl,
-            //                 ));
-            //           }).toList());
-            //     } else if (state is PromotionError) {
-            //       return Center(child: Text(state.error));
-            //     }
-            //     return Center(child: Text(state.toString()));
-            //   },
-            // ),
-            // const Gap(TSizes.md),
             const Gap(10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -308,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           width: MediaQuery.of(context).size.width / 3.5,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(16.0),
-                                            image:  DecorationImage(
+                                            image: DecorationImage(
                                               fit: BoxFit.scaleDown,
                                               image: CachedNetworkImageProvider(item.imageUrl),
                                             ),
@@ -327,9 +243,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               maxLines: 10,
                                             ),
-                                            const Text(
-                                              'Tanlang savatga qo\'shing va sotib oling!',
-                                              style: TextStyle(
+                                            Text(
+                                              item.description,
+                                              style: const TextStyle(
                                                 color: Colors.grey,
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 14,
@@ -350,18 +266,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                                 ZoomTapAnimation(
                                                   onTap: () {
-                                                    context
-                                                        .read<FoodBloc>()
-                                                        .add(AddFoodEvent(item));
-                                                    Fluttertoast.showToast(
-                                                      msg: LocaleKeys.successfully_added_to_cart
-                                                          .tr(),
-                                                      toastLength: Toast.LENGTH_SHORT,
-                                                      gravity: ToastGravity.BOTTOM,
-                                                      backgroundColor: Colors.white,
-                                                      textColor: Colors.black,
-                                                      fontSize: 16.0,
-                                                    );
+                                                    print(isOnline);
+                                                    if (isOnline) {
+                                                      AwesomeDialog(
+                                                        context: context,
+                                                        dialogType: DialogType.warning,
+                                                        animType: AnimType.bottomSlide,
+                                                        title: LocaleKeys.isOnline.tr(),
+                                                      ).show();
+                                                    } else {
+                                                      context
+                                                          .read<FoodBloc>()
+                                                          .add(AddFoodEvent(item));
+                                                      Fluttertoast.showToast(
+                                                        msg: LocaleKeys.successfully_added_to_cart
+                                                            .tr(),
+                                                        toastLength: Toast.LENGTH_SHORT,
+                                                        gravity: ToastGravity.BOTTOM,
+                                                        backgroundColor: Colors.white,
+                                                        textColor: Colors.black,
+                                                        fontSize: 16.0,
+                                                      );
+                                                    }
                                                   },
                                                   child: Container(
                                                     padding: const EdgeInsets.all(8.0),
@@ -406,15 +332,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-// Hero(
-// tag: 'product_${item.name}',
-// child: Image.asset(
-// item.imageUrl,
-// errorBuilder: (context, error, stackTrace) {
-// return Image.asset(
-// AppImages.burger,
-// );
-// },
-// ),
-// ),

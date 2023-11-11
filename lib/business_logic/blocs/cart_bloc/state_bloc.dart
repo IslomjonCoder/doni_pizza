@@ -94,6 +94,7 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
 
   void _handleLoadTodosEvent(LoadTodosEvent event, Emitter<FoodState> emit) async {
     try {
+      print('Loading food items');
       // Retrieve food items from Hive and emit the success state
       final orderItems = await hiveDatabase.getAllOrderItems();
       emit(FoodLoadedState(orderItems));
@@ -166,7 +167,7 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
       await hiveDatabase.clearAllFoodItems();
       emit(FoodLoadedState([]));
     } catch (e) {
-      emit(FoodErrorState('Failed to clear cart'));
+      emit(FoodErrorState('Failed to clear cart ${e.toString()}'));
     }
   }
 }

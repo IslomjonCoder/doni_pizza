@@ -1,4 +1,3 @@
-import 'package:doni_pizza/business_logic/blocs/order_bloc/order_remote_bloc.dart';
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
 import 'package:doni_pizza/data/database/user_service_hive.dart';
 import 'package:doni_pizza/data/models/user_model.dart';
@@ -28,7 +27,6 @@ class RouterApp extends StatelessWidget {
       listener: (BuildContext context, AuthState state) async {
         print('state changed');
         if (state.status == AuthStateEnum.authenticated) {
-          context.read<OrderRemoteBloc>().init(state.user!.uid);
           final user = await UserRepository().getUserInfo();
           context.read<AuthCubit>().updateUserModel(user);
         }

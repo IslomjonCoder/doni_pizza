@@ -8,30 +8,30 @@ class CreateOrderEvent extends OrderRemoteEvent {
   CreateOrderEvent(this.order);
 }
 
-class FetchOrdersEvent extends OrderRemoteEvent {
-  final String userId;
+// class FetchOrdersEvent extends OrderRemoteEvent {
+//   final String userId;
+//
+//   FetchOrdersEvent(this.userId);
+// }
 
-  FetchOrdersEvent(this.userId);
-}
+// class UpdateOrderEvent extends OrderRemoteEvent {
+//   final OrderModel order;
+//
+//   UpdateOrderEvent(this.order);
+// }
 
-class UpdateOrderEvent extends OrderRemoteEvent {
-  final OrderModel order;
+// class DeleteOrderEvent extends OrderRemoteEvent {
+//   final String orderId;
+//
+//   DeleteOrderEvent(this.orderId);
+// }
 
-  UpdateOrderEvent(this.order);
-}
-
-class DeleteOrderEvent extends OrderRemoteEvent {
-  final String orderId;
-
-  DeleteOrderEvent(this.orderId);
-}
-
-class ChangeOrderStatusEvent extends OrderRemoteEvent {
-  final String orderId;
-  final OrderStatus newStatus;
-
-  ChangeOrderStatusEvent(this.orderId, this.newStatus);
-}
+// class ChangeOrderStatusEvent extends OrderRemoteEvent {
+//   final String orderId;
+//   final OrderStatus newStatus;
+//
+//   ChangeOrderStatusEvent(this.orderId, this.newStatus);
+// }
 class UpdateOrdersEvent extends OrderRemoteEvent {
   final List<OrderModel> orders;
   UpdateOrdersEvent(this.orders);

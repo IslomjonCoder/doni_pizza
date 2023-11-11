@@ -18,27 +18,27 @@ class CategoryCubit extends Cubit<List<CategoryModel>> {
     }
   }
 
-  Future<void> addCategory(CategoryModel category) async {
-    try {
-      await categoryRepository.addCategory(category);
-      fetchCategories(); // Refresh the list of categories after adding a new one
-    } catch (e) {
-    }
-  }
-
-  Future<void> updateCategory(CategoryModel category) async {
-    try {
-      await categoryRepository.updateCategory(category);
-      fetchCategories(); // Refresh the list of categories after updating one
-    } catch (e) {
-    }
-  }
-
-  Future<void> deleteCategory(String categoryId) async {
-    try {
-      await categoryRepository.deleteCategory(categoryId);
-      fetchCategories(); // Refresh the list of categories after deleting one
-    } catch (e) {
-    }
-  }
+  // Future<void> addCategory(CategoryModel category) async {
+  //   try {
+  //     await categoryRepository.addCategory(category);
+  //     fetchCategories(); // Refresh the list of categories after adding a new one
+  //   } catch (e) {
+  //   }
+  // }
+  //
+  // Future<void> updateCategory(CategoryModel category) async {
+  //   try {
+  //     await categoryRepository.updateCategory(category);
+  //     fetchCategories(); // Refresh the list of categories after updating one
+  //   } catch (e) {
+  //   }
+  // }
+  //
+  // Future<void> deleteCategory(String categoryId) async {
+  //   try {
+  //     await categoryRepository.deleteCategory(categoryId);
+  //     fetchCategories(); // Refresh the list of categories after deleting one
+  //   } catch (e) {
+  //   }
+  // }
 }

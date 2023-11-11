@@ -84,10 +84,10 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
                 return const Center(child: CircularProgressIndicator(color: Colors.black));
               } else if (state is OrdersFetchedState) {
                 final successOrders = state.orders
-                    .where((element) =>
-                        element.status == OrderStatus.delivered &&
-                            element.userId == context.read<AuthCubit>().state.user?.uid ||
-                        element.status == OrderStatus.canceled)
+                    .where((element) =>element.userId == context.read<AuthCubit>().state.user?.uid
+                         &&
+                    (element.status == OrderStatus.delivered ||
+                            element.status == OrderStatus.canceled))
                     .toList();
                 return successOrders.isEmpty
                     ? Center(child: Text(LocaleKeys.noOrder.tr()))

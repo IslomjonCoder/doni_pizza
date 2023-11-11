@@ -139,12 +139,88 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:740038564434:android:2bda3d8f95aa927e645d8b",
+        "android_client_info": {
+          "package_name": "doni.fast.food"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "740038564434-3oora5jtbcjjtnf1qgqggi0ddq96f805.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "doni.fast.food",
+            "certificate_hash": "6255238bfaba1f7460ea5ce5c34d41a0e144c98e"
+          }
+        },
+        {
+          "client_id": "740038564434-8sh59l5h0vgbq844lfhoq9gpv3q89reu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "doni.fast.food",
+            "certificate_hash": "80db0d7926992471d6b7fc111392ccc6def3579f"
+          }
+        },
+        {
+          "client_id": "740038564434-dksg3a3m38ar7msh1agdei4tbdmsn6es.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "doni.fast.food",
+            "certificate_hash": "eda015c33120c59850db4a84e4f1e86025f126ee"
+          }
+        },
+        {
+          "client_id": "740038564434-ucrqo4o20u9linkgtt04kc40j3gb6r7b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "doni.fast.food",
+            "certificate_hash": "1abbb988ce7f2399c67bc38a1c4ca2e618070a70"
+          }
+        },
+        {
+          "client_id": "740038564434-0d11r4kl74g87r79g63g6cgddmu1nus1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBb4oBD3ErJIY_JbvSzmgKvZ1NL3v-hu5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "740038564434-0d11r4kl74g87r79g63g6cgddmu1nus1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "740038564434-fmfah2lrbp301phl5fft5dtivud20btg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.doniPizzaAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:740038564434:android:a5d57596cb5c9fc2645d8b",
         "android_client_info": {
           "package_name": "doni.pizza.uz"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "740038564434-10dlqcfbl2316ktsu7o0abdkken6l1eo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "doni.pizza.uz",
+            "certificate_hash": "8f8e6a31ab05bc64840b6df37b97deeeaf28ba0d"
+          }
+        },
         {
           "client_id": "740038564434-9k7hgeseajf312a5d7njgbj5bcuj8l6u.apps.googleusercontent.com",
           "client_type": 1,
@@ -175,6 +251,14 @@
           "android_info": {
             "package_name": "doni.pizza.uz",
             "certificate_hash": "124686e30a9e8282d4f286d4f32744a0aa639a82"
+          }
+        },
+        {
+          "client_id": "740038564434-vugd614loet7carfc0ktfjscd5s33dos.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "doni.pizza.uz",
+            "certificate_hash": "eda015c33120c59850db4a84e4f1e86025f126ee"
           }
         },
         {

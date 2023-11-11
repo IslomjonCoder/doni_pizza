@@ -7,11 +7,11 @@ class OrderRemoteInitial extends OrderRemoteState {}
 class OrderRemoteLoading extends OrderRemoteState {}
 
 class OrderCreatedState extends OrderRemoteState {
-
-
   OrderCreatedState();
 }
-
+class OrderCreateSuccessState extends OrderRemoteState {
+  OrderCreateSuccessState();
+}
 class OrdersFetchedState extends OrderRemoteState {
   final List<OrderModel> orders;
 
@@ -24,11 +24,11 @@ class OrderUpdatedState extends OrderRemoteState {
   OrderUpdatedState(this.order);
 }
 
-class OrderDeletedState extends OrderRemoteState {
-  final String orderId;
-
-  OrderDeletedState(this.orderId);
-}
+// class OrderDeletedState extends OrderRemoteState {
+//   final String orderId;
+//
+//   OrderDeletedState(this.orderId);
+// }
 
 class OrderStatusChangedState extends OrderRemoteState {
   // final List<OrderModel> orders;

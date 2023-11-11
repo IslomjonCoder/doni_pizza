@@ -7,7 +7,6 @@ import 'package:doni_pizza/business_logic/blocs/promotion_bloc/promotion_bloc.da
 import 'package:doni_pizza/business_logic/cubits/auth_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/category_cubit/category_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/category_index_cubit/category_index_cubit.dart';
-import 'package:doni_pizza/business_logic/cubits/food_cubit/food_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/tab_cubit/tab_cubit.dart';
 import 'package:doni_pizza/business_logic/cubits/user_data_cubit.dart';
 import 'package:doni_pizza/data/models/category_model.dart';
@@ -75,7 +74,7 @@ class MyApp extends StatelessWidget {
             create: (context) => FoodBlocRemote(foodItemRepository)..add(GetAll())),
         BlocProvider<CategoryIndexCubit>(create: (context) => CategoryIndexCubit()),
         BlocProvider<CategoryCubit>(create: (context) => CategoryCubit(categoryRepository)),
-        BlocProvider<FoodCubit>(create: (context) => FoodCubit(foodItemRepository)),
+        // BlocProvider<FoodCubit>(create: (context) => FoodCubit(foodItemRepository)),
         BlocProvider<UserDataCubit>(create: (context) => UserDataCubit()),
         BlocProvider<AuthBloc>(create: (context) => AuthBloc(authRepository)),
       ],
@@ -99,4 +98,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-// write login app design
+

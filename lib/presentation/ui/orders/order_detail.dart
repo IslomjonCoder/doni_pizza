@@ -76,7 +76,6 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
         context.read<TabCubit>().changeTab(2);
       }
       else{
-        print('no user');
         final userModel = await UserRepository().getUserInfo();
         HiveService.saveUserModelToHive(userModel!);
         final order = OrderModel(
@@ -97,7 +96,6 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
         context.read<FoodBloc>().add(ClearCartEvent());
         context.read<TabCubit>().changeTab(2);
       }
-      print('done');
     }
   }
 
@@ -122,7 +120,16 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
       ),
       body: BlocListener<OrderRemoteBloc, OrderRemoteState>(
         listener: (context, state)async {
-          if (state is OrderCreatedState|| state is OrdersFetchedState) {
+          if (state is OrderRemoteLoading){
+            showDialog(
+              context: context,
+              builder: (context) => const Center(
+                child: CupertinoActivityIndicator(color: Colors.white,radius: 15,),
+              ),
+            );
+          } else if (state is OrderCreateSuccessState ) {
+            context.read<FoodBloc>().add(ClearCartEvent());
+            context.read<TabCubit>().changeTab(2);
             Fluttertoast.showToast(
               msg: LocaleKeys.orderCreated.tr(),
               toastLength: Toast.LENGTH_SHORT,
@@ -131,9 +138,7 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
               backgroundColor: Colors.white,
               textColor: Colors.black,
             );
-            context.read<FoodBloc>().add(ClearCartEvent());
-            context.read<TabCubit>().changeTab(2);
-            Navigator.pop(context);
+            context.read<OrderRemoteBloc>().add(UpdateOrdersEvent(context.read<OrderRemoteBloc>().orders));
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
@@ -266,13 +271,12 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
-                          child: context.watch<OrderRemoteBloc>().state is OrderRemoteLoading?
-                               const CupertinoActivityIndicator(radius: 15,color: Colors.black,)
-                              : Text(LocaleKeys.confirmOrder.tr()),
+                          child: Text(LocaleKeys.confirmOrder.tr(),
                         ),
                       ),
                     ),
                   ),
+                ),
                 ),
               ],
             ),

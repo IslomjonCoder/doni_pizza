@@ -77,5 +77,6 @@ abstract class LocaleKeys {
   static const youCantOrder = "you_cant_order";
   static const currentOrder = 'current_order';
   static const deliveryTime = 'delivery_time';
+  static const isOnline = 'isOnline';
 
 }
